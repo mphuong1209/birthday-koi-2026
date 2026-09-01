@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 Chúc Mừng Sinh Nhật {{ partner_name }} 🎂</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Quicksand:wght@400;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="confetti-canvas"></div>
+
+<!-- SCREEN INTRO: HERO & CAKE -->
+<div id="screen-intro" class="screen">
+  <section class="hero" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;">
+    <div class="floating-balloons" id="floatingBalloons"></div>
+
+    <div class="birthday-badge">🎂 HAPPY BIRTHDAY GẤU DUDU KOI 🐻</div>
+    <h1 class="hero-title">🎉 Chúc Mừng Sinh Nhật <br>
+      <span class="highlight-name">{{ partner_name }}</span>
+      <img src="/static/images/dudu-face.png" alt="Dudu" class="title-bear-icon" onerror="this.style.display='none'">
+    </h1>
+    <p class="hero-sub">Món quà ngọt ngào từ <strong>{{ your_name }}</strong> dành tặng gấu béo của em ❤️</p>
+
+    <!-- INTERACTIVE BIRTHDAY CAKE -->
+    <div class="cake-container">
+      <div class="cake" id="birthdayCake">
+        <div class="candle" id="candle">
+          <div class="flame" id="candleFlame"></div>
+        </div>
+        <div class="icing"></div>
+        <div class="cake-layer layer-top"></div>
+        <div class="cake-layer layer-bottom"></div>
+      </div>
+      <p class="cake-hint">🐻 Thổi nến rồi ghi ước nguyện của anh gấu nha!</p>
+      <button id="blowCandleBtn" class="blow-btn">🕯️ Thổi Nến &amp; Viết Ước Nguyện 🐻 ✨</button>
+    </div>
+
+    <!-- WISH FORM (hiện sau khi thổi nến) -->
+    <div id="wishForm" class="wish-form hidden">
+      <div class="wish-form-inner">
+        <div class="wish-title">✨ Anh gấu ước điều gì cho tuổi mới? 🐻</div>
+        <textarea id="wishInput" class="wish-textarea" placeholder="Viết ước nguyện của anh gấu ở đây nè... Bé Minnie sẽ đọc được 💖" rows="4"></textarea>
+        <button id="sendWishBtn" class="send-wish-btn">💌 Gửi ước nguyện đến Bé Minnie ✨</button>
+        <div id="wishDisplay" class="wish-display hidden"></div>
+      </div>
+    </div>
+
+    <!-- BIRTHDAY COUNTDOWN -->
+    <div class="countdown-wrapper">
+      <h3 class="countdown-title">⏰ Đếm ngược đến sinh nhật Anh Dudu Koi (10/09/2026):</h3>
+      <div class="counter-box birthday-box" id="bdayCounter">
+        <div class="counter-item"><span id="bdays">0</span><small>ngày</small></div>
+        <div class="counter-item"><span id="bhours">0</span><small>giờ</small></div>
+        <div class="counter-item"><span id="bminutes">0</span><small>phút</small></div>
+        <div class="counter-item"><span id="bseconds">0</span><small>giây</small></div>
+      </div>
+    </div>
+
+    <!-- LOVE DURATION SWEET BADGE -->
+    <div class="love-badge" style="margin-bottom: 60px;">
+      🧸 {{ your_name }} &amp; {{ partner_name }} đã bên nhau <strong id="days">0</strong> ngày ngọt ngào
+      <span class="sub-counter">
+        (<span id="hours">0</span>h <span id="minutes">0</span>m <span id="seconds">0</span>s)
+      </span>
+    </div>
+
+    </section>
+</div>
+
+<!-- SCREEN 1: BIRTHDAY CARD -->
+<div id="screen-1" class="screen">
+  <section class="section gift-section">
+    <h2>🎁 Thiệp Chúc Mừng Sinh Nhật 🎁</h2>
+    <div class="gift-box-container">
+      <div class="gift-reveal-panel" style="animation: none;">
+        <div class="gift-message-card">
+          <img src="/static/images/hpbd-dudu.gif" alt="Happy Birthday Dudu" class="card-gif">
+          <div id="typewriterMessage" class="message-text typewriter-font" data-text="{{ birthday_message }}"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SCREEN 2: SECRET GIFT BOX (PHOTO & REASONS) -->
+<div id="screen-2" class="screen">
+  <section class="section gift-section">
+    <h2>📸 Hộp Quà Kỷ Niệm 📸</h2>
+    <div class="gift-box-container">
+      <div class="gift-reveal-panel" style="animation: none;">
+        <!-- ANIMATED DUDU x3 -->
+        <div class="gift-cake-box">
+          <img src="/static/images/dudu.png" alt="Dudu" class="dudu-gift-img d1" onerror="this.style.display='none'">
+          <img src="/static/images/dudu.png" alt="Dudu" class="dudu-gift-img d2" onerror="this.style.display='none'">
+          <img src="/static/images/dudu.png" alt="Dudu" class="dudu-gift-img d3" onerror="this.style.display='none'">
+        </div>
+
+        <!-- GIFT PHOTO FRAME -->
+        <div class="gift-photo-frame">
+          <img src="{{ url_for('static', filename='images/' ~ gift_image) }}"
+               alt="Kỷ niệm quà tặng"
+               onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+          <div class="photo-caption">📸 Khoảnh khắc ngọt ngào của Anh Dudu Koi &amp; Bé Bubu Minnie 💖</div>
+        </div>
+
+        <!-- REASONS & MUSIC PLAYER -->
+        <div class="gift-message-card">
+          <div id="reasonBox" class="reason-box-inner">
+            💖 "Vì Anh Dudu Koi 🐻 là chàng gấu tuyệt vời nhất mà Minnie may mắn có được ✨"
+          </div>
+          <button id="randomReasonBtn" class="cute-mini-btn">🎲 Đổi lời chúc ngọt ngào khác ✨</button>
+        </div>
+
+        <div class="music-player-box" style="margin-top: 20px;">
+          <p class="music-label">🎵 Âm nhạc mừng sinh nhật Anh Dudu Koi:</p>
+          <button id="giftMusicPlayBtn" class="music-play-btn">▶️ Phát Nhạc Sinh Nhật 🎶</button>
+          <small class="music-hint">👉 Chép file nhạc yêu thích (đặt tên <code>happy_birthday.mp3</code>) vào thư mục <code>static/music/</code> rồi F5 lại trang là có nhạc ngay nhé!</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SCREEN 3: TIMELINE & GALLERY -->
+<div id="screen-3" class="screen" style="min-height: auto;">
+  <section class="section timeline-section">
+    <h2>📸 Thước Phim Kỷ Niệm Cùng Anh Gấu Dudu Koi 🐻</h2>
+    <div class="timeline">
+      {% for m in memories %}
+      <div class="timeline-item {% if loop.index % 2 == 0 %}right{% else %}left{% endif %}">
+        <div class="timeline-card">
+          <span class="timeline-date">🌟 {{ m.date }}</span>
+          <div class="timeline-img-wrap">
+            <img src="{{ url_for('static', filename='images/' ~ m.image) }}"
+                 alt="{{ m.title }}"
+                 onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ loop.index }}/400/250'">
+          </div>
+          <h3>{{ m.title }}</h3>
+          <p>{{ m.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="section gallery-section">
+    <h2>🖼️ Album Ảnh Rực Rỡ Của Anh Gấu 🐻</h2>
+    <div class="gallery-grid">
+      {% for img in gallery_images %}
+      <div class="gallery-item">
+        <img src="{{ url_for('static', filename='images/' ~ img) }}"
+             alt="Kỷ niệm"
+             onerror="this.onerror=null; this.src='https://picsum.photos/seed/g{{ loop.index }}/300/300'">
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <footer class="footer">
+    Made with ❤️ by {{ your_name }} — dành riêng cho {{ partner_name }} nhân dịp Sinh Nhật 🎂🐻
+  </footer>
+</div>
+
+<!-- SLIDER ARROWS -->
+<button id="sliderPrevBtn" class="slider-arrow left-arrow hidden">❮</button>
+<button id="sliderNextBtn" class="slider-arrow right-arrow hidden">❯</button>
+
+<!-- AUDIO PLAYER (hidden) -->
+<audio id="bgMusic" src="{{ url_for('static', filename='music/' ~ (bg_music or 'happy_birthday.mp3')) }}" loop></audio>
+<button id="musicToggle" class="music-btn" title="Bật/Tắt nhạc">🎵</button>
+
+<script>
+  const LOVE_START_TS = {{ love_start_ts }};
+  const NEXT_BDAY_TS = {{ next_bday_ts }};
+  const REASONS = {{ reasons | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
