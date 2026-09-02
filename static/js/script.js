@@ -401,3 +401,65 @@ function launchMiniConfetti() {
     setTimeout(() => piece.remove(), 1400);
   }
 }
+
+// ================== PRE-INTRO COUNTDOWN ==================
+document.addEventListener("DOMContentLoaded", () => {
+  const preIntro = document.getElementById("pre-intro");
+  const preCountdown = document.getElementById("pre-countdown");
+  const preContent = document.getElementById("pre-content");
+  
+  if (preIntro && preCountdown && preContent) {
+    // Hide main screen scroll temporarily
+    document.body.style.overflow = "hidden";
+    
+    let count = 3;
+    const interval = setInterval(() => {
+      count--;
+      if (count > 0) {
+        preCountdown.textContent = count;
+        // Re-trigger CSS animation
+        preCountdown.style.animation = 'none';
+        preCountdown.offsetHeight; /* trigger reflow */
+        preCountdown.style.animation = null; 
+      } else {
+        clearInterval(interval);
+        preCountdown.classList.add("hidden");
+        preContent.classList.remove("hidden");
+        
+        // Launch confetti multiple times for big effect
+        launchConfetti();
+        setTimeout(launchConfetti, 500);
+        setTimeout(launchConfetti, 1000);
+        
+        // Launch balloons specifically for pre-intro
+        for(let i=0; i<20; i++) {
+          setTimeout(() => {
+            const container = document.body;
+            const balloon = document.createElement("div");
+            balloon.className = "floating-balloon";
+            balloon.style.zIndex = "10000"; // Ensure it's above pre-intro
+            
+            const randomImage = bubuDuduImages[Math.floor(Math.random() * bubuDuduImages.length)];
+            balloon.innerHTML = `<img src="/static/images/bubu-dudu/${randomImage}" style="width:100%; height:auto;" onerror="this.style.display='none'">`;
+            
+            balloon.style.left = Math.random() * 95 + "%";
+            balloon.style.animationDuration = (2 + Math.random() * 3) + "s"; // Faster for pre-intro
+            const size = 40 + Math.random() * 50; 
+            balloon.style.width = size + "px";
+            
+            container.appendChild(balloon);
+            setTimeout(() => balloon.remove(), 6000);
+          }, i * 200);
+        }
+        
+        // Fade out and remove pre-intro
+        setTimeout(() => {
+          preIntro.style.opacity = '0';
+          preIntro.style.visibility = 'hidden';
+          document.body.style.overflow = "auto"; // Restore scroll
+          setTimeout(() => preIntro.remove(), 1000);
+        }, 4000);
+      }
+    }, 1000);
+  }
+});
