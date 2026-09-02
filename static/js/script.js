@@ -57,7 +57,7 @@ updateLoveCounter();
 updateBirthdayCounter();
 
 // ================== SLIDER SCREEN LOGIC ==================
-const screens = ["screen-intro", "screen-1", "screen-2", "screen-3"];
+const screens = ["screen-intro", "screen-1", "screen-2"];
 let currentScreenIndex = 0;
 const prevBtn = document.getElementById("sliderPrevBtn");
 const nextBtn = document.getElementById("sliderNextBtn");

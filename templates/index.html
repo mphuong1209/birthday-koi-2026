@@ -69,27 +69,20 @@
     </section>
 </div>
 
-<!-- SCREEN 1: BIRTHDAY CARD -->
+<!-- SCREEN 1: BIRTHDAY CARD & SECRET GIFT BOX -->
 <div id="screen-1" class="screen">
   <section class="section gift-section">
     <h2>🎁 Thiệp Chúc Mừng Sinh Nhật 🎁</h2>
     <div class="gift-box-container">
       <div class="gift-reveal-panel" style="animation: none;">
-        <div class="gift-message-card">
-          <img src="/static/images/hpbd-dudu.gif" alt="Happy Birthday Dudu" class="card-gif">
-          <div id="typewriterMessage" class="message-text typewriter-font" data-text="{{ birthday_message }}"></div>
+        
+        <!-- ROW OF 3 GIFS -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px;">
+          <img src="/static/images/hpbd-dudu.gif" alt="Happy Birthday Dudu" class="card-gif" style="margin: 0; max-width: 32%;">
+          <img src="/static/images/29766047531101193.gif" alt="Happy Birthday Dudu 2" class="card-gif" style="margin: 0; max-width: 32%;">
+          <img src="/static/images/295830269299405777_1.gif" alt="Happy Birthday Dudu 3" class="card-gif" style="margin: 0; max-width: 32%;">
         </div>
-      </div>
-    </div>
-  </section>
-</div>
 
-<!-- SCREEN 2: SECRET GIFT BOX (PHOTO & REASONS) -->
-<div id="screen-2" class="screen">
-  <section class="section gift-section">
-    <h2>📸 Hộp Quà Kỷ Niệm 📸</h2>
-    <div class="gift-box-container">
-      <div class="gift-reveal-panel" style="animation: none;">
         <!-- ANIMATED DUDU x3 -->
         <div class="gift-cake-box">
           <img src="/static/images/dudu.png" alt="Dudu" class="dudu-gift-img d1" onerror="this.style.display='none'">
@@ -97,12 +90,9 @@
           <img src="/static/images/dudu.png" alt="Dudu" class="dudu-gift-img d3" onerror="this.style.display='none'">
         </div>
 
-        <!-- GIFT PHOTO FRAME -->
-        <div class="gift-photo-frame">
-          <img src="{{ url_for('static', filename='images/' ~ gift_image) }}"
-               alt="Kỷ niệm quà tặng"
-               onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
-          <div class="photo-caption">📸 Khoảnh khắc ngọt ngào của Anh Dudu Koi &amp; Bé Bubu Minnie 💖</div>
+        <!-- TYPEWRITER MESSAGE -->
+        <div class="gift-message-card">
+          <div id="typewriterMessage" class="message-text typewriter-font" data-text="{{ birthday_message }}"></div>
         </div>
 
         <!-- REASONS & MUSIC PLAYER -->
@@ -113,18 +103,14 @@
           <button id="randomReasonBtn" class="cute-mini-btn">🎲 Đổi lời chúc ngọt ngào khác ✨</button>
         </div>
 
-        <div class="music-player-box" style="margin-top: 20px;">
-          <p class="music-label">🎵 Âm nhạc mừng sinh nhật Anh Dudu Koi:</p>
-          <button id="giftMusicPlayBtn" class="music-play-btn">▶️ Phát Nhạc Sinh Nhật 🎶</button>
-          <small class="music-hint">👉 Chép file nhạc yêu thích (đặt tên <code>happy_birthday.mp3</code>) vào thư mục <code>static/music/</code> rồi F5 lại trang là có nhạc ngay nhé!</small>
-        </div>
+
       </div>
     </div>
   </section>
 </div>
 
-<!-- SCREEN 3: TIMELINE & GALLERY -->
-<div id="screen-3" class="screen" style="min-height: auto;">
+<!-- SCREEN 2: TIMELINE & GALLERY -->
+<div id="screen-2" class="screen" style="min-height: auto;">
   <section class="section timeline-section">
     <h2>📸 Thước Phim Kỷ Niệm Cùng Anh Gấu Dudu Koi 🐻</h2>
     <div class="timeline">
