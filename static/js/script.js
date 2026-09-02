@@ -116,12 +116,18 @@ showScreen(0);
 
 // ================== THỔI NẾN → MỞ FORM ƯỚC NGUYỆN ==================
 const blowCandleBtn = document.getElementById("blowCandleBtn");
-const candleFlame = document.getElementById("candleFlame");
 const wishForm = document.getElementById("wishForm");
 
-if (blowCandleBtn && candleFlame) {
+if (blowCandleBtn) {
   blowCandleBtn.addEventListener("click", () => {
-    candleFlame.classList.add("off");
+    const flame1 = document.getElementById("candleFlame1");
+    const flame2 = document.getElementById("candleFlame2");
+    const flame3 = document.getElementById("candleFlame3");
+    
+    if (flame1) flame1.classList.add("off");
+    if (flame2) flame2.classList.add("off");
+    if (flame3) flame3.classList.add("off");
+    
     blowCandleBtn.style.display = "none";
     if (wishForm) {
       wishForm.classList.remove("hidden");

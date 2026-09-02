@@ -36,21 +36,23 @@
   <section class="hero" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;">
     <div class="floating-balloons" id="floatingBalloons"></div>
 
-    <div class="birthday-badge">🎂 HAPPY BIRTHDAY GẤU DUDU KOI 🐻</div>
+    <div class="birthday-badge">🎂 10/09/1997 - 10/09/2026 🐻</div>
     <h1 class="hero-title">🎉 Chúc Mừng Sinh Nhật <br>
       <span class="highlight-name">{{ partner_name }}</span>
       <img src="/static/images/dudu-face.png" alt="Dudu" class="title-bear-icon" onerror="this.style.display='none'">
     </h1>
-    <p class="hero-sub">Món quà ngọt ngào từ <strong>{{ your_name }}</strong> dành tặng gấu béo của em ❤️</p>
 
     <!-- INTERACTIVE BIRTHDAY CAKE -->
     <div class="cake-container">
       <div class="cake" id="birthdayCake">
-        <div class="candle" id="candle">
-          <div class="flame" id="candleFlame"></div>
+        <div class="candles">
+          <div class="candle" id="candle1"><div class="flame" id="candleFlame1"></div></div>
+          <div class="candle candle-center" id="candle2"><div class="flame" id="candleFlame2"></div></div>
+          <div class="candle" id="candle3"><div class="flame" id="candleFlame3"></div></div>
         </div>
         <div class="icing"></div>
         <div class="cake-layer layer-top"></div>
+        <div class="cake-layer layer-middle"></div>
         <div class="cake-layer layer-bottom"></div>
       </div>
       <p class="cake-hint">🐻 Thổi nến rồi ghi ước nguyện của anh gấu nha!</p>
@@ -65,25 +67,6 @@
         <button id="sendWishBtn" class="send-wish-btn">💌 Gửi ước nguyện đến Bé Minnie ✨</button>
         <div id="wishDisplay" class="wish-display hidden"></div>
       </div>
-    </div>
-
-    <!-- BIRTHDAY COUNTDOWN -->
-    <div class="countdown-wrapper">
-      <h3 class="countdown-title">⏰ Đếm ngược đến sinh nhật Anh Dudu Koi (10/09/2026):</h3>
-      <div class="counter-box birthday-box" id="bdayCounter">
-        <div class="counter-item"><span id="bdays">0</span><small>ngày</small></div>
-        <div class="counter-item"><span id="bhours">0</span><small>giờ</small></div>
-        <div class="counter-item"><span id="bminutes">0</span><small>phút</small></div>
-        <div class="counter-item"><span id="bseconds">0</span><small>giây</small></div>
-      </div>
-    </div>
-
-    <!-- LOVE DURATION SWEET BADGE -->
-    <div class="love-badge" style="margin-bottom: 60px;">
-      🧸 {{ your_name }} &amp; {{ partner_name }} đã bên nhau <strong id="days">0</strong> ngày ngọt ngào
-      <span class="sub-counter">
-        (<span id="hours">0</span>h <span id="minutes">0</span>m <span id="seconds">0</span>s)
-      </span>
     </div>
 
     </section>
