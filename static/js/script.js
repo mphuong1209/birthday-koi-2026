@@ -133,7 +133,6 @@ if (blowCandleBtn) {
     launchConfetti();
     setTimeout(launchConfetti, 500);
     spawnBurstBalloons();
-    playAudio();
     
     hasBlownCandle = true;
     // Hiện mũi tên sang màn tiếp theo
@@ -241,30 +240,49 @@ if (closePoemBtn) {
 }
 
 
-const bgMusicEl = document.getElementById("bgMusic");
-const musicToggleBtn = document.getElementById("musicToggle");
+// ================== GLOBAL TOGGLES (THEME & MUSIC) ==================
+const themeToggle = document.getElementById("themeToggle");
+const musicToggleBtn = document.getElementById("musicToggleBtn");
+const countdownAudioEl = document.getElementById("countdown-audio");
+const bubuAudioEl = document.getElementById("bubu-audio");
 
-let isMusicPlaying = false;
+let isMusicPlaying = true;
 
-function playAudio() {
-  if (bgMusicEl) {
-    bgMusicEl.play().then(() => {
-      isMusicPlaying = true;
-      if (giftMusicPlayBtn) giftMusicPlayBtn.textContent = "⏸️ Tạm Dừng Nhạc 🎶";
-      if (musicToggleBtn) musicToggleBtn.textContent = "⏸️";
-    }).catch(() => {
-      if (giftMusicPlayBtn) giftMusicPlayBtn.textContent = "⚠️ Chưa có file nhạc – chép happy_birthday.mp3 vào static/music/";
-    });
+if (themeToggle) {
+  const savedTheme = localStorage.getItem("dudu_theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.textContent = "☀️";
   }
+
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    if (document.body.classList.contains("dark-mode")) {
+      localStorage.setItem("dudu_theme", "dark");
+      themeToggle.textContent = "☀️";
+    } else {
+      localStorage.setItem("dudu_theme", "light");
+      themeToggle.textContent = "🌙";
+    }
+  });
 }
 
-function pauseAudio() {
-  if (bgMusicEl) {
-    bgMusicEl.pause();
-    isMusicPlaying = false;
-    if (giftMusicPlayBtn) giftMusicPlayBtn.textContent = "▶️ Phát Nhạc Sinh Nhật 🎶";
-    if (musicToggleBtn) musicToggleBtn.textContent = "🎵";
-  }
+if (musicToggleBtn) {
+  musicToggleBtn.addEventListener("click", () => {
+    if (isMusicPlaying) {
+      if (countdownAudioEl) countdownAudioEl.pause();
+      if (bubuAudioEl) bubuAudioEl.pause();
+      isMusicPlaying = false;
+      musicToggleBtn.textContent = "🔇";
+    } else {
+      if (bubuAudioEl) {
+        bubuAudioEl.currentTime = 0;
+        bubuAudioEl.play().catch(e => console.log(e));
+      }
+      isMusicPlaying = true;
+      musicToggleBtn.textContent = "🎵";
+    }
+  });
 }
 
 const typewriterMessage = document.getElementById("typewriterMessage");
@@ -318,11 +336,7 @@ if (typewriterMessage) {
 
 // Đã gỡ bỏ giftMusicPlayBtn vì dư thừa
 
-if (musicToggleBtn) {
-  musicToggleBtn.addEventListener("click", () => {
-    isMusicPlaying ? pauseAudio() : playAudio();
-  });
-}
+
 
 // ================== BÓNG BAY GẤU NÂU HERO ==================
 const bubuDuduImages = [

@@ -208,10 +208,11 @@
 <button id="sliderPrevBtn" class="slider-arrow left-arrow hidden">❮</button>
 <button id="sliderNextBtn" class="slider-arrow right-arrow hidden">❯</button>
 
-<!-- AUDIO PLAYER (hidden) -->
-<audio id="bgMusic" src="{{ url_for('static', filename='music/' ~ (bg_music or 'happy_birthday.mp3')) }}" loop></audio>
-<button id="musicToggle" class="music-btn" title="Bật/Tắt nhạc">🎵</button>
-
+<!-- FLOATING CONTROLS -->
+<div class="floating-controls">
+  <button id="themeToggle" class="float-btn" title="Chế độ Ngày/Đêm">🌙</button>
+  <button id="musicToggleBtn" class="float-btn" title="Bật/Tắt nhạc">🎵</button>
+</div>
 <script>
   const LOVE_START_TS = {{ love_start_ts }};
   const NEXT_BDAY_TS = {{ next_bday_ts }};
