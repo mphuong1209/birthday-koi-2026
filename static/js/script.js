@@ -352,27 +352,24 @@ animateOnScroll.forEach(item => scrollObserver.observe(item));
 
 // ================== CONFETTI ==================
 function launchConfetti() {
-  const canvas = document.getElementById("confetti-canvas");
-  if (!canvas) return;
-  const colors = ["#ff4757", "#ffa502", "#2ed573", "#1e90ff", "#9b59b6", "#ff6b81", "#ffd32a"];
-  for (let i = 0; i < 150; i++) {
-    const piece = document.createElement("div");
-    piece.style.position = "absolute";
-    piece.style.width = (6 + Math.random() * 8) + "px";
-    piece.style.height = (10 + Math.random() * 10) + "px";
-    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.left = Math.random() * 100 + "vw";
-    piece.style.top = "-20px";
-    piece.style.opacity = "0.95";
-    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-    piece.style.borderRadius = "3px";
-    piece.style.transition = `top ${2 + Math.random() * 2.5}s ease-out, transform ${2 + Math.random() * 2.5}s ease-out`;
-    canvas.appendChild(piece);
-    requestAnimationFrame(() => {
-      piece.style.top = "110vh";
-      piece.style.transform = `rotate(${Math.random() * 1080}deg)`;
-    });
-    setTimeout(() => piece.remove(), 5000);
+  if (typeof confetti === "function") {
+    var duration = 3000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10001 };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    var interval = setInterval(function() {
+      var timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+      var particleCount = 50 * (timeLeft / duration);
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
   }
 }
 
@@ -409,56 +406,67 @@ document.addEventListener("DOMContentLoaded", () => {
   const preContent = document.getElementById("pre-content");
   
   if (preIntro && preCountdown && preContent) {
-    // Hide main screen scroll temporarily
     document.body.style.overflow = "hidden";
     
-    let count = 3;
+    let count = 10;
     const interval = setInterval(() => {
       count--;
       if (count > 0) {
         preCountdown.textContent = count;
-        // Re-trigger CSS animation
         preCountdown.style.animation = 'none';
-        preCountdown.offsetHeight; /* trigger reflow */
+        preCountdown.offsetHeight; 
         preCountdown.style.animation = null; 
       } else {
         clearInterval(interval);
         preCountdown.classList.add("hidden");
         preContent.classList.remove("hidden");
         
-        // Launch confetti multiple times for big effect
         launchConfetti();
-        setTimeout(launchConfetti, 500);
-        setTimeout(launchConfetti, 1000);
         
-        // Launch balloons specifically for pre-intro
-        for(let i=0; i<20; i++) {
+        // Launch real Streamlit-like balloons
+        const balloonSVG = `
+          <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="#0984e3" stroke-width="2"/>
+            <polygon points="26,70 34,70 30,76" fill="#c0392b"/>
+            <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad)"/>
+            <ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/>
+            <defs>
+              <radialGradient id="ballGrad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ff7675"/>
+                <stop offset="50%" stop-color="#d63031"/>
+                <stop offset="100%" stop-color="#a01a1a"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        `;
+
+        for(let i=0; i<30; i++) {
           setTimeout(() => {
-            const container = document.body;
+            const container = document.getElementById("pre-intro");
+            if (!container) return;
             const balloon = document.createElement("div");
             balloon.className = "floating-balloon";
-            balloon.style.zIndex = "10000"; // Ensure it's above pre-intro
+            balloon.style.zIndex = "10000"; 
             
-            const randomImage = bubuDuduImages[Math.floor(Math.random() * bubuDuduImages.length)];
-            balloon.innerHTML = `<img src="/static/images/bubu-dudu/${randomImage}" style="width:100%; height:auto;" onerror="this.style.display='none'">`;
+            balloon.innerHTML = balloonSVG;
             
             balloon.style.left = Math.random() * 95 + "%";
-            balloon.style.animationDuration = (2 + Math.random() * 3) + "s"; // Faster for pre-intro
-            const size = 40 + Math.random() * 50; 
+            balloon.style.animationDuration = (4 + Math.random() * 4) + "s";
+            const size = 60 + Math.random() * 40; 
             balloon.style.width = size + "px";
+            balloon.style.height = (size * 2.5) + "px";
             
             container.appendChild(balloon);
-            setTimeout(() => balloon.remove(), 6000);
-          }, i * 200);
+            setTimeout(() => balloon.remove(), 8000);
+          }, i * 150);
         }
         
-        // Fade out and remove pre-intro
         setTimeout(() => {
           preIntro.style.opacity = '0';
           preIntro.style.visibility = 'hidden';
-          document.body.style.overflow = "auto"; // Restore scroll
+          document.body.style.overflow = "auto"; 
           setTimeout(() => preIntro.remove(), 1000);
-        }, 4000);
+        }, 5000);
       }
     }, 1000);
   }
