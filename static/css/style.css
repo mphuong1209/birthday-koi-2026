@@ -343,15 +343,26 @@ h1, h2, h3 {
 
 .floating-balloon {
   position: absolute;
-  bottom: -60px;
   font-size: 2rem;
-  animation: floatUp linear infinite;
-  opacity: 0.85;
+  animation: floatUp linear forwards;
+  opacity: 0;
 }
 
 @keyframes floatUp {
-  to {
-    transform: translateY(-115vh) rotate(360deg);
+  0% {
+    bottom: -10%;
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  75% {
+    opacity: 0.85;
+  }
+  100% {
+    bottom: 85%;
+    transform: rotate(180deg);
     opacity: 0;
   }
 }
