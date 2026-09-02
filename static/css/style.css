@@ -997,8 +997,7 @@ h1, h2, h3 {
 .pre-content img {
   width: 250px;
   height: auto;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
   margin-bottom: 20px;
 }
 
