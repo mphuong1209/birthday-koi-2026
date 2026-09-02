@@ -982,11 +982,26 @@ h1, h2, h3 {
 
 .pre-countdown {
   font-family: 'Baloo 2', cursive;
-  font-size: 8rem;
-  color: white;
-  font-weight: 800;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-  animation: popIn 0.5s ease;
+  font-size: clamp(8rem, 35vw, 15rem);
+  font-weight: 900;
+  
+  /* Gradient text (Trắng -> Vàng -> Cam sáng) */
+  background: linear-gradient(to bottom, #ffffff 20%, #ffeaa7 60%, #ff9f43 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Viền chữ trắng và bóng đổ 3D */
+  -webkit-text-stroke: 4px #ffffff;
+  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.25));
+  
+  animation: popInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popInBounce {
+  0% { transform: scale(0.3) translateY(50px); opacity: 0; }
+  60% { transform: scale(1.15) translateY(-15px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 .pre-content {

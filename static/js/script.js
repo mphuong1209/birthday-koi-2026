@@ -407,7 +407,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const startOverlay = document.getElementById("start-overlay");
   const startBtn = document.getElementById("start-btn");
   const countdownAudio = document.getElementById("countdown-audio");
+  const bubuAudio = document.getElementById("bubu-audio");
   
+  if (bubuAudio) {
+    bubuAudio.addEventListener("ended", () => {
+      setTimeout(() => {
+        bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
+      }, 1500);
+    });
+  }
+
+  if (countdownAudio && bubuAudio) {
+    countdownAudio.addEventListener("ended", () => {
+      bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
+    });
+  }
+
   if (preIntro && preCountdown && preContent && startOverlay && startBtn) {
     document.body.style.overflow = "hidden";
     
@@ -417,41 +432,54 @@ document.addEventListener("DOMContentLoaded", () => {
       
       if (countdownAudio) {
         countdownAudio.play().catch(e => console.log("Audio play failed:", e));
-      }
-      
-      // Thời gian chờ (milli-giây) trước khi số 10 chuyển sang 9.
-      // Nếu nhạc hát số 10 chậm hơn web, hãy tăng số này lên (ví dụ: 1500, 2000)
-      // Nếu nhạc hát số 10 nhanh hơn web, hãy giảm số này xuống.
-      const SYNC_DELAY_MS = 1500; 
-      
-      let count = 10;
-      setTimeout(() => {
-        const interval = setInterval(() => {
-          count--;
-          if (count > 0) {
-            preCountdown.textContent = count;
-            preCountdown.style.animation = 'none';
-            preCountdown.offsetHeight; 
-            preCountdown.style.animation = null; 
-          } else {
-            clearInterval(interval);
-            preCountdown.classList.add("hidden");
-            preContent.classList.remove("hidden");
+        
+        // --- BỘ CĂN CHỈNH ĐỒNG BỘ NHẠC & SỐ ---
+        // 1. Nhạc dạo mất bao nhiêu giây trước khi tiếng "10" vang lên? 
+        // (Ví dụ: nếu vào phát đọc "10" luôn thì để 0. Nếu 1 giây rưỡi sau mới đọc thì để 1.5)
+        const AUDIO_START_TIME = 0.5; 
+        
+        // 2. Khoảng cách giữa 2 con số (thường là 1 giây)
+        const SECONDS_PER_NUMBER = 1.0;
+        
+        countdownAudio.addEventListener('timeupdate', () => {
+          const t = countdownAudio.currentTime;
+          
+          if (t >= AUDIO_START_TIME) {
+            let currentNumber = 10 - Math.floor((t - AUDIO_START_TIME) / SECONDS_PER_NUMBER);
             
-            launchConfetti();
+            if (currentNumber > 0 && currentNumber <= 10) {
+              if (preCountdown.textContent != currentNumber) {
+                preCountdown.textContent = currentNumber;
+                preCountdown.style.animation = 'none';
+                preCountdown.offsetHeight; 
+                preCountdown.style.animation = null; 
+              }
+            } else if (currentNumber <= 0 && !preCountdown.classList.contains("hidden")) {
+              preCountdown.classList.add("hidden");
+              preContent.classList.remove("hidden");
+              
+              launchConfetti();
         
         // Launch real Streamlit-like balloons in rainbow colors
         const balloonColors = [
-          ['#ff7675', '#d63031', '#a01a1a'], // Red
-          ['#ffb8b8', '#ff9f43', '#c0392b'], // Orange
-          ['#ffeaa7', '#feca57', '#f39c12'], // Yellow
-          ['#55efc4', '#1dd1a1', '#10ac84'], // Green
-          ['#74b9ff', '#54a0ff', '#2e86de'], // Blue
-          ['#a29bfe', '#5f27cd', '#341f97'], // Indigo
-          ['#fd79a8', '#ff9ff3', '#f368e0']  // Violet/Pink
+          ['#ff7675', '#d63031', '#a01a1a'], // Đỏ
+          ['#ff4757', '#ff6b81', '#c0392b'], // Đỏ tươi
+          ['#ffb8b8', '#ff9f43', '#e67e22'], // Cam
+          ['#ffa502', '#eccc68', '#f39c12'], // Vàng cam
+          ['#ffeaa7', '#feca57', '#f39c12'], // Vàng
+          ['#55efc4', '#1dd1a1', '#10ac84'], // Xanh ngọc
+          ['#2ed573', '#7bed9f', '#218c74'], // Xanh lá
+          ['#1e90ff', '#70a1ff', '#5352ed'], // Xanh lam
+          ['#74b9ff', '#54a0ff', '#2e86de'], // Xanh nước biển
+          ['#00d2d3', '#48dbfb', '#0abde3'], // Xanh lơ (Cyan)
+          ['#a29bfe', '#5f27cd', '#341f97'], // Chàm (Indigo)
+          ['#9b59b6', '#8e44ad', '#2c3e50'], // Tím
+          ['#fd79a8', '#ff9ff3', '#f368e0'], // Tím hồng
+          ['#ff1493', '#ff69b4', '#c71585'], // Hồng đậm (Hot Pink)
+          ['#ffcccc', '#ffb8b8', '#ff9999']  // Hồng phấn
         ];
 
-        for(let i=0; i<30; i++) {
+        for(let i=0; i<35; i++) {
           setTimeout(() => {
             const container = document.getElementById("pre-intro");
             if (!container) return;
@@ -460,11 +488,14 @@ document.addEventListener("DOMContentLoaded", () => {
             balloon.style.zIndex = "10000"; 
             
             const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+            const isPolka = Math.random() > 0.6; // 40% chance of dots
+            
             const balloonSVG = `
               <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
                 <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="#0984e3" stroke-width="2"/>
                 <polygon points="26,70 34,70 30,76" fill="${color[1]}"/>
                 <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad${i})"/>
+                ${isPolka ? `<ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#polka${i})"/>` : ''}
                 <ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/>
                 <defs>
                   <radialGradient id="ballGrad${i}" cx="35%" cy="30%" r="70%">
@@ -472,6 +503,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <stop offset="50%" stop-color="${color[1]}"/>
                     <stop offset="100%" stop-color="${color[2]}"/>
                   </radialGradient>
+                  ${isPolka ? `
+                  <pattern id="polka${i}" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
+                    <circle cx="6" cy="6" r="2.5" fill="rgba(255,255,255,0.5)" />
+                  </pattern>
+                  ` : ''}
                 </defs>
               </svg>
             `;
@@ -479,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             balloon.style.left = Math.random() * 95 + "%";
             balloon.style.animationDuration = (4 + Math.random() * 4) + "s";
-            const size = 60 + Math.random() * 40; 
+            const size = 60 + Math.random() * 45; 
             balloon.style.width = size + "px";
             balloon.style.height = (size * 2.5) + "px";
             
@@ -494,9 +530,10 @@ document.addEventListener("DOMContentLoaded", () => {
           document.body.style.overflow = "auto"; 
           setTimeout(() => preIntro.remove(), 1000);
         }, 5000);
+            }
+          }
+        });
       }
-    }, 1000);
-    }, SYNC_DELAY_MS);
     });
   }
 });
