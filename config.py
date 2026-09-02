@@ -30,7 +30,7 @@ BIRTHDAY_DATE = {
 
 # ---------- 4. LỜI CHÚC SINH NHẬT CHÍNH ----------
 BIRTHDAY_MESSAGE = (
-    "🎂 HAPPY BIRTHDAY ANH DUDU KOI! 🐻🎉✨\n\n"
+    "HAPPY BIRTHDAY ANH DUDU KOI!\n\n"
     "Chúc anh gấu béo của em luôn đẹp trai, vui vẻ, khoẻ mạnh và gặt hái được thật nhiều thành công trong tuổi mới! "
     "Cảm ơn Anh Dudu Koi vì đã luôn yêu thương, cưng chiều và chở che cho Bé Bubu Minnie. "
     "Minnie chúc gấu béo tuổi mới thật rạng rỡ, luôn cười tươi mỗi ngày và đón thật nhiều mùa sinh nhật ngọt ngào nữa bên em nha. "

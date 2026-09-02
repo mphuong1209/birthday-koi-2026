@@ -223,7 +223,10 @@ if (typewriterMessage) {
   
   // Tạo 2 thẻ div để chứa tiêu đề và lời chúc riêng biệt
   typewriterMessage.innerHTML = `
-    <div id="tw-title" style="text-align: center; font-weight: 800; font-size: 1.4rem; color: #ff4757; margin-bottom: 4px; font-family: 'Baloo 2', cursive;"></div>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px;">
+      <div id="tw-title" style="text-align: center; font-weight: 800; font-size: 1.8rem; color: #ff4757; font-family: 'Baloo 2', cursive;"></div>
+      <img src="/static/images/dudu-face.png" alt="Dudu" style="width: 50px; height: auto; animation: dudoBounceGift 1.2s ease-in-out infinite alternate;">
+    </div>
     <div id="tw-body" style="text-align: justify;"></div>
   `;
   
