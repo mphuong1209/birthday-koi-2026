@@ -616,7 +616,8 @@ h1, h2, h3 {
   font-size: 1.15rem;
   font-weight: 500;
   color: #2d3436;
-  line-height: 1.6;
+  line-height: 1.45;
+  letter-spacing: -0.2px;
   white-space: pre-wrap; /* Để giữ nguyên dấu xuống dòng \n */
   min-height: 100px; /* Tránh giật bố cục khi mới bắt đầu chạy chữ */
   text-align: justify;

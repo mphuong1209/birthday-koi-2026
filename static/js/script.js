@@ -223,7 +223,7 @@ if (typewriterMessage) {
   
   // Tạo 2 thẻ div để chứa tiêu đề và lời chúc riêng biệt
   typewriterMessage.innerHTML = `
-    <div id="tw-title" style="text-align: center; font-weight: 700; font-size: 1.3rem; color: #ff4757; margin-bottom: 4px; font-family: 'Baloo 2', cursive;"></div>
+    <div id="tw-title" style="text-align: center; font-weight: 700; font-size: 1.8rem; color: #ff4757; margin-bottom: 8px; font-family: 'Dancing Script', cursive; letter-spacing: 1px;"></div>
     <div id="tw-body" style="text-align: justify;"></div>
   `;
   
