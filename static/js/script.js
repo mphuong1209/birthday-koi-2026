@@ -404,24 +404,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const preIntro = document.getElementById("pre-intro");
   const preCountdown = document.getElementById("pre-countdown");
   const preContent = document.getElementById("pre-content");
+  const startOverlay = document.getElementById("start-overlay");
+  const startBtn = document.getElementById("start-btn");
+  const countdownAudio = document.getElementById("countdown-audio");
   
-  if (preIntro && preCountdown && preContent) {
+  if (preIntro && preCountdown && preContent && startOverlay && startBtn) {
     document.body.style.overflow = "hidden";
     
-    let count = 10;
-    const interval = setInterval(() => {
-      count--;
-      if (count > 0) {
-        preCountdown.textContent = count;
-        preCountdown.style.animation = 'none';
-        preCountdown.offsetHeight; 
-        preCountdown.style.animation = null; 
-      } else {
-        clearInterval(interval);
-        preCountdown.classList.add("hidden");
-        preContent.classList.remove("hidden");
-        
-        launchConfetti();
+    startBtn.addEventListener("click", () => {
+      startOverlay.style.opacity = '0';
+      setTimeout(() => startOverlay.remove(), 500);
+      
+      if (countdownAudio) {
+        countdownAudio.play().catch(e => console.log("Audio play failed:", e));
+      }
+      
+      // Thời gian chờ (milli-giây) trước khi số 10 chuyển sang 9.
+      // Nếu nhạc hát số 10 chậm hơn web, hãy tăng số này lên (ví dụ: 1500, 2000)
+      // Nếu nhạc hát số 10 nhanh hơn web, hãy giảm số này xuống.
+      const SYNC_DELAY_MS = 1500; 
+      
+      let count = 10;
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          count--;
+          if (count > 0) {
+            preCountdown.textContent = count;
+            preCountdown.style.animation = 'none';
+            preCountdown.offsetHeight; 
+            preCountdown.style.animation = null; 
+          } else {
+            clearInterval(interval);
+            preCountdown.classList.add("hidden");
+            preContent.classList.remove("hidden");
+            
+            launchConfetti();
         
         // Launch real Streamlit-like balloons in rainbow colors
         const balloonColors = [
@@ -479,5 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 5000);
       }
     }, 1000);
+    }, SYNC_DELAY_MS);
+    });
   }
 });

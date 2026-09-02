@@ -1029,3 +1029,44 @@ h1, h2, h3 {
   90% { opacity: 1; }
   100% { transform: translateY(-130vh); opacity: 0; }
 }
+
+/* ---------- START OVERLAY ---------- */
+.start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffb8b8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10005;
+  transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.start-btn {
+  padding: 15px 40px;
+  font-size: 1.5rem;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: bold;
+  color: #ffb8b8;
+  background: white;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: pulse 2s infinite;
+}
+
+.start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
