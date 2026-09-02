@@ -433,11 +433,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "hidden";
     
     startBtn.addEventListener("click", () => {
-      startOverlay.style.opacity = '0';
-      setTimeout(() => startOverlay.remove(), 500);
+      const giftBox = document.getElementById("giftBox");
+      if (giftBox) giftBox.classList.add("open");
       
-      if (countdownAudio) {
-        countdownAudio.play().catch(e => console.log("Audio play failed:", e));
+      setTimeout(() => {
+        startBtn.classList.add("fade-out");
+      }, 500);
+      
+      setTimeout(() => {
+        startOverlay.style.opacity = '0';
+        setTimeout(() => startOverlay.remove(), 500);
+        
+        if (countdownAudio) {
+          countdownAudio.play().catch(e => console.log("Audio play failed:", e));
         
         // --- BỘ CĂN CHỈNH ĐỒNG BỘ NHẠC & SỐ ---
         // 1. Nhạc dạo mất bao nhiêu giây trước khi tiếng "10" vang lên? 
@@ -456,6 +464,23 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentNumber > 0 && currentNumber <= 10) {
               if (preCountdown.textContent != currentNumber) {
                 preCountdown.textContent = currentNumber;
+                
+                // Set pastel color based on the number sequence
+                const numColors = [
+                  "", // 0
+                  "#bae1ff", // 1 - xanh dương
+                  "#baffc9", // 2 - xanh lá
+                  "#ffffba", // 3 - vàng
+                  "#ffb3ba", // 4 - hồng
+                  "#bae1ff", // 5 - xanh dương
+                  "#baffc9", // 6 - xanh lá
+                  "#ffffba", // 7 - vàng
+                  "#ffb3ba", // 8 - hồng
+                  "#bae1ff", // 9 - xanh dương
+                  "#baffc9"  // 10 - xanh lá
+                ];
+                preCountdown.style.setProperty('--num-color', numColors[currentNumber] || "#baffc9");
+                
                 preCountdown.style.animation = 'none';
                 preCountdown.offsetHeight; 
                 preCountdown.style.animation = null; 
@@ -535,6 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
+      }, 1000);
     });
   }
 });
