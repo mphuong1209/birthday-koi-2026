@@ -1032,19 +1032,19 @@ h1, h2, h3 {
 }
 
 .pre-countdown {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Quicksand', sans-serif;
   font-size: clamp(8rem, 35vw, 15rem);
-  font-weight: 900;
+  font-weight: 700;
   
-  /* Gradient text (Trắng -> Vàng -> Cam sáng) */
-  background: linear-gradient(to bottom, #ffffff 20%, #ffeaa7 60%, #ff9f43 100%);
+  /* Pastel gradient */
+  background: linear-gradient(135deg, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   
-  /* Viền chữ trắng và bóng đổ 3D */
-  -webkit-text-stroke: 4px #ffffff;
-  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.25));
+  /* Viền chữ trắng và bóng đổ */
+  -webkit-text-stroke: 3px #ffffff;
+  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.15));
   
   animation: popInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -1061,18 +1061,32 @@ h1, h2, h3 {
 }
 
 .pre-content img {
-  width: 250px;
+  width: 350px;
+  max-width: 90vw;
   height: auto;
-  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
-  margin-bottom: 20px;
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.25));
+  margin-bottom: 25px;
 }
 
 .pre-content h2 {
   font-family: 'Great Vibes', cursive;
-  font-size: 3.5rem;
-  color: white;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 400;
+  text-transform: none;
+  background: none;
+  -webkit-text-fill-color: initial;
+  -webkit-text-stroke: 1px white;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,0.15));
   margin-top: 10px;
+  line-height: 1.1;
+}
+
+.text-pink {
+  color: #ff1493; /* Hot pink */
+}
+
+.text-brown {
+  color: #8b4513; /* Saddle brown */
 }
 
 @keyframes popIn {

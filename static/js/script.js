@@ -466,25 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
               
               launchConfetti();
         
-        // Launch real Streamlit-like balloons in rainbow colors
-        const balloonColors = [
-          ['#ff7675', '#d63031', '#a01a1a'], // Đỏ
-          ['#ff4757', '#ff6b81', '#c0392b'], // Đỏ tươi
-          ['#ffb8b8', '#ff9f43', '#e67e22'], // Cam
-          ['#ffa502', '#eccc68', '#f39c12'], // Vàng cam
-          ['#ffeaa7', '#feca57', '#f39c12'], // Vàng
-          ['#55efc4', '#1dd1a1', '#10ac84'], // Xanh ngọc
-          ['#2ed573', '#7bed9f', '#218c74'], // Xanh lá
-          ['#1e90ff', '#70a1ff', '#5352ed'], // Xanh lam
-          ['#74b9ff', '#54a0ff', '#2e86de'], // Xanh nước biển
-          ['#00d2d3', '#48dbfb', '#0abde3'], // Xanh lơ (Cyan)
-          ['#a29bfe', '#5f27cd', '#341f97'], // Chàm (Indigo)
-          ['#9b59b6', '#8e44ad', '#2c3e50'], // Tím
-          ['#fd79a8', '#ff9ff3', '#f368e0'], // Tím hồng
-          ['#ff1493', '#ff69b4', '#c71585'], // Hồng đậm (Hot Pink)
-          ['#ffcccc', '#ffb8b8', '#ff9999']  // Hồng phấn
-        ];
-
+        // Launch infinite vibrant balloons, avoiding the center
         for(let i=0; i<35; i++) {
           setTimeout(() => {
             const container = document.getElementById("pre-intro");
@@ -493,12 +475,18 @@ document.addEventListener("DOMContentLoaded", () => {
             balloon.className = "pre-intro-balloon";
             balloon.style.zIndex = "10000"; 
             
-            const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+            // Random pastel HSL colors
+            const hue = Math.floor(Math.random() * 360);
+            const color = [
+              `hsl(${hue}, 80%, 90%)`, // Highlight
+              `hsl(${hue}, 70%, 80%)`, // Base (Pastel)
+              `hsl(${hue}, 60%, 65%)`  // Shadow
+            ];
             const isPolka = Math.random() > 0.6; // 40% chance of dots
             
             const balloonSVG = `
               <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="#0984e3" stroke-width="2"/>
+                <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
                 <polygon points="26,70 34,70 30,76" fill="${color[1]}"/>
                 <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad${i})"/>
                 ${isPolka ? `<ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#polka${i})"/>` : ''}
@@ -519,7 +507,14 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             balloon.innerHTML = balloonSVG;
             
-            balloon.style.left = Math.random() * 95 + "%";
+            // Tránh khu vực giữa màn hình (từ 30% đến 70%) để không che chữ và avatar
+            let leftPos = Math.random() * 100;
+            if (leftPos > 30 && leftPos < 70) {
+              leftPos = leftPos > 50 ? leftPos + 35 : leftPos - 35; 
+            }
+            leftPos = Math.max(2, Math.min(92, leftPos)); // Keep within screen bounds
+            
+            balloon.style.left = leftPos + "%";
             balloon.style.animationDuration = (4 + Math.random() * 4) + "s";
             const size = 60 + Math.random() * 45; 
             balloon.style.width = size + "px";
