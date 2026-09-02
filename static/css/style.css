@@ -19,6 +19,17 @@
   display: flex;
 }
 
+#screen-1 {
+  /* Overlay white with 0.8 opacity to make the background image slightly faded but still visible */
+  background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/static/images/background.jpg') center/cover no-repeat;
+  background-attachment: fixed;
+}
+
+#screen-2 {
+  background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('/static/images/pc-wallpapers-v0-6q5bm9ch16xc1.webp') center/cover no-repeat;
+  background-attachment: fixed;
+}
+
 @keyframes fadeInScreen {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
