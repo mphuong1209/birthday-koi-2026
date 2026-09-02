@@ -423,31 +423,41 @@ document.addEventListener("DOMContentLoaded", () => {
         
         launchConfetti();
         
-        // Launch real Streamlit-like balloons
-        const balloonSVG = `
-          <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="#0984e3" stroke-width="2"/>
-            <polygon points="26,70 34,70 30,76" fill="#c0392b"/>
-            <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad)"/>
-            <ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/>
-            <defs>
-              <radialGradient id="ballGrad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#ff7675"/>
-                <stop offset="50%" stop-color="#d63031"/>
-                <stop offset="100%" stop-color="#a01a1a"/>
-              </radialGradient>
-            </defs>
-          </svg>
-        `;
+        // Launch real Streamlit-like balloons in rainbow colors
+        const balloonColors = [
+          ['#ff7675', '#d63031', '#a01a1a'], // Red
+          ['#ffb8b8', '#ff9f43', '#c0392b'], // Orange
+          ['#ffeaa7', '#feca57', '#f39c12'], // Yellow
+          ['#55efc4', '#1dd1a1', '#10ac84'], // Green
+          ['#74b9ff', '#54a0ff', '#2e86de'], // Blue
+          ['#a29bfe', '#5f27cd', '#341f97'], // Indigo
+          ['#fd79a8', '#ff9ff3', '#f368e0']  // Violet/Pink
+        ];
 
         for(let i=0; i<30; i++) {
           setTimeout(() => {
             const container = document.getElementById("pre-intro");
             if (!container) return;
             const balloon = document.createElement("div");
-            balloon.className = "floating-balloon";
+            balloon.className = "pre-intro-balloon";
             balloon.style.zIndex = "10000"; 
             
+            const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+            const balloonSVG = `
+              <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="#0984e3" stroke-width="2"/>
+                <polygon points="26,70 34,70 30,76" fill="${color[1]}"/>
+                <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad${i})"/>
+                <ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/>
+                <defs>
+                  <radialGradient id="ballGrad${i}" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="${color[0]}"/>
+                    <stop offset="50%" stop-color="${color[1]}"/>
+                    <stop offset="100%" stop-color="${color[2]}"/>
+                  </radialGradient>
+                </defs>
+              </svg>
+            `;
             balloon.innerHTML = balloonSVG;
             
             balloon.style.left = Math.random() * 95 + "%";

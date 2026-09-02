@@ -958,7 +958,7 @@ h1, h2, h3 {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 999;
+  z-index: 10001;
 }
 
 @keyframes pop {
@@ -1013,4 +1013,19 @@ h1, h2, h3 {
   0% { transform: scale(0); opacity: 0; }
   80% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- PRE-INTRO BALLOONS ---------- */
+.pre-intro-balloon {
+  position: absolute;
+  bottom: -150px;
+  animation: floatStraightUp linear forwards;
+  pointer-events: none;
+}
+
+@keyframes floatStraightUp {
+  0% { transform: translateY(0); opacity: 0; }
+  5% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-130vh); opacity: 0; }
 }
