@@ -619,9 +619,9 @@ h1, h2, h3 {
   line-height: 1.45;
   letter-spacing: -0.2px;
   white-space: pre-wrap; /* Để giữ nguyên dấu xuống dòng \n */
-  min-height: 100px; /* Tránh giật bố cục khi mới bắt đầu chạy chữ */
+  min-height: 60px; /* Tránh giật bố cục khi mới bắt đầu chạy chữ */
   text-align: justify;
-  padding: 10px 15px;
+  padding: 0px 5px;
 }
 
 .hidden {
