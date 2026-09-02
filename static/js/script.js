@@ -488,123 +488,72 @@ document.addEventListener("DOMContentLoaded", () => {
         startOverlay.style.opacity = '0';
         setTimeout(() => startOverlay.remove(), 500);
         
+        // Thử phát audio (mobile có thể bị chặn - không sao)
         if (countdownAudio) {
-          countdownAudio.play().catch(e => console.log("Audio play failed:", e));
-        
-        // --- BỘ CĂN CHỈNH ĐỒNG BỘ NHẠC & SỐ ---
-        // 1. Nhạc dạo mất bao nhiêu giây trước khi tiếng "10" vang lên? 
-        // (Ví dụ: nếu vào phát đọc "10" luôn thì để 0. Nếu 1 giây rưỡi sau mới đọc thì để 1.5)
-        const AUDIO_START_TIME = 0.5; 
-        
-        // 2. Khoảng cách giữa 2 con số (thường là 1 giây)
-        const SECONDS_PER_NUMBER = 1.0;
-        
-        countdownAudio.addEventListener('timeupdate', () => {
-          const t = countdownAudio.currentTime;
-          
-          if (t >= AUDIO_START_TIME) {
-            let currentNumber = 10 - Math.floor((t - AUDIO_START_TIME) / SECONDS_PER_NUMBER);
-            
-            if (currentNumber > 0 && currentNumber <= 10) {
-              if (preCountdown.textContent != currentNumber) {
-                preCountdown.textContent = currentNumber;
-                
-                // Set pastel color based on the number sequence
-                const numColors = [
-                  "", // 0
-                  "#bae1ff", // 1 - xanh dương
-                  "#baffc9", // 2 - xanh lá
-                  "#ffffba", // 3 - vàng
-                  "#ff7675", // 4 - đỏ pastel
-                  "#bae1ff", // 5 - xanh dương
-                  "#baffc9", // 6 - xanh lá
-                  "#ffffba", // 7 - vàng
-                  "#ff7675", // 8 - đỏ pastel
-                  "#bae1ff", // 9 - xanh dương
-                  "#baffc9"  // 10 - xanh lá
-                ];
-                preCountdown.style.setProperty('--num-color', numColors[currentNumber] || "#baffc9");
-                
-                preCountdown.style.animation = 'none';
-                preCountdown.offsetHeight; 
-                preCountdown.style.animation = null; 
-              }
-            } else if (currentNumber <= 0 && !preCountdown.classList.contains("hidden")) {
+          countdownAudio.play().catch(e => console.log("Audio blocked on mobile:", e));
+        }
+
+        // --- ĐẾM NGƯỢC BẰNG setInterval (hoạt động cả khi audio bị chặn) ---
+        const numColors = [
+          "", "#bae1ff", "#baffc9", "#ffffba", "#ff7675",
+          "#bae1ff", "#baffc9", "#ffffba", "#ff7675", "#bae1ff", "#baffc9"
+        ];
+
+        let currentNumber = 10;
+        preCountdown.style.setProperty('--num-color', numColors[10]);
+
+        setTimeout(() => {
+          const countdownInterval = setInterval(() => {
+            currentNumber--;
+
+            if (currentNumber > 0) {
+              preCountdown.textContent = currentNumber;
+              preCountdown.style.setProperty('--num-color', numColors[currentNumber] || "#baffc9");
+              preCountdown.style.animation = 'none';
+              preCountdown.offsetHeight;
+              preCountdown.style.animation = null;
+            } else {
+              clearInterval(countdownInterval);
               preCountdown.classList.add("hidden");
               preContent.classList.remove("hidden");
-              
               launchConfetti();
-        
-        // Launch infinite vibrant balloons, avoiding the center
-        for(let i=0; i<35; i++) {
-          setTimeout(() => {
-            const container = document.getElementById("pre-intro");
-            if (!container) return;
-            const balloon = document.createElement("div");
-            balloon.className = "pre-intro-balloon";
-            balloon.style.zIndex = "10000"; 
-            
-            // Random pastel HSL colors
-            const hue = Math.floor(Math.random() * 360);
-            const color = [
-              `hsl(${hue}, 80%, 90%)`, // Highlight
-              `hsl(${hue}, 70%, 80%)`, // Base (Pastel)
-              `hsl(${hue}, 60%, 65%)`  // Shadow
-            ];
-            const isPolka = Math.random() > 0.6; // 40% chance of dots
-            
-            const balloonSVG = `
-              <svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-                <polygon points="26,70 34,70 30,76" fill="${color[1]}"/>
-                <ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#ballGrad${i})"/>
-                ${isPolka ? `<ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#polka${i})"/>` : ''}
-                <ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/>
-                <defs>
-                  <radialGradient id="ballGrad${i}" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="${color[0]}"/>
-                    <stop offset="50%" stop-color="${color[1]}"/>
-                    <stop offset="100%" stop-color="${color[2]}"/>
-                  </radialGradient>
-                  ${isPolka ? `
-                  <pattern id="polka${i}" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(20)">
-                    <circle cx="6" cy="6" r="2.5" fill="rgba(255,255,255,0.5)" />
-                  </pattern>
-                  ` : ''}
-                </defs>
-              </svg>
-            `;
-            balloon.innerHTML = balloonSVG;
-            
-            // Tránh khu vực giữa màn hình (từ 30% đến 70%) để không che chữ và avatar
-            let leftPos = Math.random() * 100;
-            if (leftPos > 30 && leftPos < 70) {
-              leftPos = leftPos > 50 ? leftPos + 35 : leftPos - 35; 
+
+              for (let i = 0; i < 35; i++) {
+                setTimeout(() => {
+                  const container = document.getElementById("pre-intro");
+                  if (!container) return;
+                  const balloon = document.createElement("div");
+                  balloon.className = "pre-intro-balloon";
+                  balloon.style.zIndex = "10000";
+                  const hue = Math.floor(Math.random() * 360);
+                  const color = [`hsl(${hue},80%,90%)`, `hsl(${hue},70%,80%)`, `hsl(${hue},60%,65%)`];
+                  const isPolka = Math.random() > 0.6;
+                  balloon.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 60 150" xmlns="http://www.w3.org/2000/svg"><path d="M 30 75 Q 15 100 35 125 T 30 150" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/><polygon points="26,70 34,70 30,76" fill="${color[1]}"/><ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#bg${i})"/>${isPolka ? `<ellipse cx="30" cy="40" rx="26" ry="32" fill="url(#pk${i})"/>` : ''}<ellipse cx="18" cy="25" rx="6" ry="12" fill="rgba(255,255,255,0.4)" transform="rotate(-30 18 25)"/><defs><radialGradient id="bg${i}" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="${color[0]}"/><stop offset="50%" stop-color="${color[1]}"/><stop offset="100%" stop-color="${color[2]}"/></radialGradient>${isPolka ? `<pattern id="pk${i}" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="2.5" fill="rgba(255,255,255,0.5)"/></pattern>` : ''}</defs></svg>`;
+                  let leftPos = Math.random() * 100;
+                  if (leftPos > 30 && leftPos < 70) leftPos = leftPos > 50 ? leftPos + 35 : leftPos - 35;
+                  leftPos = Math.max(2, Math.min(92, leftPos));
+                  balloon.style.left = leftPos + "%";
+                  balloon.style.animationDuration = (4 + Math.random() * 4) + "s";
+                  const size = 60 + Math.random() * 45;
+                  balloon.style.width = size + "px";
+                  balloon.style.height = (size * 2.5) + "px";
+                  container.appendChild(balloon);
+                  setTimeout(() => balloon.remove(), 8000);
+                }, i * 150);
+              }
+
+              setTimeout(() => {
+                preIntro.style.opacity = '0';
+                preIntro.style.visibility = 'hidden';
+                document.body.style.overflow = "auto";
+                setTimeout(() => preIntro.remove(), 1000);
+              }, 5000);
             }
-            leftPos = Math.max(2, Math.min(92, leftPos)); // Keep within screen bounds
-            
-            balloon.style.left = leftPos + "%";
-            balloon.style.animationDuration = (4 + Math.random() * 4) + "s";
-            const size = 60 + Math.random() * 45; 
-            balloon.style.width = size + "px";
-            balloon.style.height = (size * 2.5) + "px";
-            
-            container.appendChild(balloon);
-            setTimeout(() => balloon.remove(), 8000);
-          }, i * 150);
-        }
-        
-        setTimeout(() => {
-          preIntro.style.opacity = '0';
-          preIntro.style.visibility = 'hidden';
-          document.body.style.overflow = "auto"; 
-          setTimeout(() => preIntro.remove(), 1000);
-        }, 5000);
-            }
-          }
-        });
-      }
+          }, 1000);
+        }, 500);
+
       }, 1000);
     });
   }
 });
+
