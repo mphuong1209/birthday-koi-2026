@@ -1266,3 +1266,77 @@ h1, h2, h3 {
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
+/* Colored Gift Box Variants */
+.lid-pink { background-color: #ff9ff3; border-color: #f368e0; }
+.body-pink { background-color: #ff9ff3; border-color: #f368e0; }
+.ribbon-purple { background-color: #5f27cd; }
+.gift-lid.lid-pink::before { background-color: #5f27cd; }
+.bow-purple::before, .bow-purple::after { border-color: #5f27cd; }
+#wish-btn .gift-text { color: #5f27cd; }
+
+.lid-blue { background-color: #48dbfb; border-color: #0abde3; }
+.body-blue { background-color: #48dbfb; border-color: #0abde3; }
+.ribbon-orange { background-color: #ff9f43; }
+.gift-lid.lid-blue::before { background-color: #ff9f43; }
+.bow-orange::before, .bow-orange::after { border-color: #ff9f43; }
+#poem-btn .gift-text { color: #ff9f43; }
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 230, 230, 0.85); /* Pastel pink glass */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10005;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  padding: 30px;
+  transform: translateY(30px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.show .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: #ff6b81;
+  cursor: pointer;
+  transition: transform 0.2s;
+  z-index: 10;
+}
+
+.modal-close-btn:hover {
+  transform: scale(1.2) rotate(90deg);
+}

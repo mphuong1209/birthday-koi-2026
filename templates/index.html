@@ -88,7 +88,40 @@
   <section class="section gift-section">
     <h2>🎁 Thiệp Chúc Mừng Sinh Nhật 🎁</h2>
     <div class="gift-box-container">
-      <div class="gift-reveal-panel" style="animation: none;">
+    <div class="gifts-wrapper" style="display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+      
+      <!-- BOX 1: WISH -->
+      <div id="wish-btn" class="gift-container">
+        <div class="gift-box" id="giftBoxWish">
+          <div class="gift-lid lid-pink"></div>
+          <div class="gift-body body-pink">
+            <div class="gift-ribbon-vertical ribbon-purple"></div>
+            <div class="gift-ribbon-horizontal ribbon-purple"></div>
+          </div>
+          <div class="gift-bow bow-purple"></div>
+        </div>
+        <div class="gift-text">Mở Lời Chúc 💌</div>
+      </div>
+
+      <!-- BOX 2: POEM -->
+      <div id="poem-btn" class="gift-container">
+        <div class="gift-box" id="giftBoxPoem">
+          <div class="gift-lid lid-blue"></div>
+          <div class="gift-body body-blue">
+            <div class="gift-ribbon-vertical ribbon-orange"></div>
+            <div class="gift-ribbon-horizontal ribbon-orange"></div>
+          </div>
+          <div class="gift-bow bow-orange"></div>
+        </div>
+        <div class="gift-text">Mở Thơ Tặng 📜</div>
+      </div>
+
+    </div>
+
+    <!-- WISH MODAL -->
+    <div id="modalWish" class="modal-overlay hidden">
+      <div class="modal-content gift-reveal-panel">
+        <button class="modal-close-btn" id="closeWishBtn">&times;</button>
         
         <!-- ROW OF 3 GIFS -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px;">
@@ -109,15 +142,27 @@
           <div id="typewriterMessage" class="message-text typewriter-font" data-text="{{ birthday_message }}"></div>
         </div>
 
-        <!-- REASONS & MUSIC PLAYER -->
-        <div class="gift-message-card">
-          <div id="reasonBox" class="reason-box-inner">
-            💖 "Vì Anh Dudu Koi 🐻 là chàng gấu tuyệt vời nhất mà Minnie may mắn có được ✨"
-          </div>
-          <button id="randomReasonBtn" class="cute-mini-btn">🎲 Đổi lời chúc ngọt ngào khác ✨</button>
+
+      </div>
+    </div>
+
+    <!-- POEM MODAL -->
+    <div id="modalPoem" class="modal-overlay hidden">
+      <div class="modal-content gift-reveal-panel">
+        <button class="modal-close-btn" id="closePoemBtn">&times;</button>
+        <h2 style="font-family: 'Dancing Script', cursive; font-size: clamp(2.5rem, 6vw, 4rem); color: #ff4757; text-shadow: 2px 2px 0 #fff; margin-bottom: 20px;">Thơ Tặng Gấu Dudu 🐻</h2>
+        <div class="gift-message-card" style="font-family: 'Quicksand', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); font-weight: 600; line-height: 2; text-align: center; color: #555;">
+          <p>
+            Gấu béo Dudu của em ơi,<br>
+            Hôm nay sinh nhật tuổi mới rồi!<br>
+            Chúc anh hay ăn mà không mập,<br>
+            Lúc nào cũng vui vẻ tươi cười.<br><br>
+            Anh nhớ ngoan ngoãn nghe lời bé,<br>
+            Yêu thương chiều chuộng nhất trên đời.<br>
+            Dudu Koi ơi, em thương lắm,<br>
+            Mãi mãi bên nhau chẳng tách rời! 💖
+          </p>
         </div>
-
-
       </div>
     </div>
   </section>

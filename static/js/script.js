@@ -97,11 +97,7 @@ function showScreen(index) {
     }
   }
   
-  // Kích hoạt Typewriter nếu tới màn 1
-  if (index === 1 && !typewriterTriggered && typeof window.triggerTypewriter === "function") {
-    typewriterTriggered = true;
-    setTimeout(window.triggerTypewriter, 500);
-  }
+  // Typewriter sẽ được kích hoạt khi mở hộp quà Lời Chúc
 }
 
 if (prevBtn) {
@@ -189,12 +185,62 @@ if (sendWishBtn && wishInput) {
   });
 }
 
-// ================== HỘP QUÀ BÍ MẬT ==================
-const giftBtn = document.getElementById("giftBtn");
-const giftRevealPanel = document.getElementById("giftRevealPanel");
-const reasonBox = document.getElementById("reasonBox");
-const randomReasonBtn = document.getElementById("randomReasonBtn");
-const giftMusicPlayBtn = document.getElementById("giftMusicPlayBtn");
+// ================== HỘP QUÀ BÍ MẬT (LỜI CHÚC & THƠ) ==================
+const wishBtn = document.getElementById("wish-btn");
+const poemBtn = document.getElementById("poem-btn");
+const modalWish = document.getElementById("modalWish");
+const modalPoem = document.getElementById("modalPoem");
+const closeWishBtn = document.getElementById("closeWishBtn");
+const closePoemBtn = document.getElementById("closePoemBtn");
+
+if (wishBtn && modalWish) {
+  wishBtn.addEventListener("click", () => {
+    const box = document.getElementById("giftBoxWish");
+    if (box) box.classList.add("open");
+    
+    setTimeout(() => {
+      modalWish.classList.remove("hidden"); // Remove hidden if present
+      modalWish.classList.add("show");
+      
+      // Kích hoạt Typewriter nếu chưa chạy
+      if (!typewriterTriggered && typeof window.triggerTypewriter === "function") {
+        typewriterTriggered = true;
+        setTimeout(window.triggerTypewriter, 300);
+      }
+    }, 600);
+  });
+}
+
+if (poemBtn && modalPoem) {
+  poemBtn.addEventListener("click", () => {
+    const box = document.getElementById("giftBoxPoem");
+    if (box) box.classList.add("open");
+    
+    setTimeout(() => {
+      modalPoem.classList.remove("hidden");
+      modalPoem.classList.add("show");
+    }, 600);
+  });
+}
+
+// Đóng Modal
+if (closeWishBtn) {
+  closeWishBtn.addEventListener("click", () => {
+    modalWish.classList.remove("show");
+    const box = document.getElementById("giftBoxWish");
+    if (box) box.classList.remove("open");
+  });
+}
+
+if (closePoemBtn) {
+  closePoemBtn.addEventListener("click", () => {
+    modalPoem.classList.remove("show");
+    const box = document.getElementById("giftBoxPoem");
+    if (box) box.classList.remove("open");
+  });
+}
+
+
 const bgMusicEl = document.getElementById("bgMusic");
 const musicToggleBtn = document.getElementById("musicToggle");
 
@@ -274,19 +320,9 @@ if (typewriterMessage) {
 }
 
 
-if (randomReasonBtn && reasonBox) {
-  randomReasonBtn.addEventListener("click", () => {
-    const r = REASONS[Math.floor(Math.random() * REASONS.length)];
-    reasonBox.innerHTML = "💖 " + r;
-    launchMiniConfetti();
-  });
-}
 
-if (giftMusicPlayBtn) {
-  giftMusicPlayBtn.addEventListener("click", () => {
-    isMusicPlaying ? pauseAudio() : playAudio();
-  });
-}
+
+// Đã gỡ bỏ giftMusicPlayBtn vì dư thừa
 
 if (musicToggleBtn) {
   musicToggleBtn.addEventListener("click", () => {
@@ -471,11 +507,11 @@ document.addEventListener("DOMContentLoaded", () => {
                   "#bae1ff", // 1 - xanh dương
                   "#baffc9", // 2 - xanh lá
                   "#ffffba", // 3 - vàng
-                  "#ffb3ba", // 4 - hồng
+                  "#ff7675", // 4 - đỏ pastel
                   "#bae1ff", // 5 - xanh dương
                   "#baffc9", // 6 - xanh lá
                   "#ffffba", // 7 - vàng
-                  "#ffb3ba", // 8 - hồng
+                  "#ff7675", // 8 - đỏ pastel
                   "#bae1ff", // 9 - xanh dương
                   "#baffc9"  // 10 - xanh lá
                 ];
