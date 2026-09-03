@@ -1044,19 +1044,22 @@ h1, h2, h3 {
 }
 
 .pre-countdown {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Quicksand', sans-serif;
   font-size: clamp(8rem, 35vw, 15rem);
   font-weight: 900;
   
-  /* Dynamic pastel color via JS */
-  background: var(--num-color, #baffc9);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* Use solid color to fill */
+  color: var(--num-color, #baffc9);
   
-  /* Viền chữ trắng và bóng đổ */
-  -webkit-text-stroke: 3px #ffffff;
-  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.15));
+  /* Thicken the font using text-stroke with the same color */
+  -webkit-text-stroke: 6px var(--num-color, #baffc9);
+  
+  /* Create the white outline and shadow using text-shadow */
+  text-shadow: 
+    -5px -5px 0 #ffffff,  0 -5px 0 #ffffff,  5px -5px 0 #ffffff,
+    -5px  0   0 #ffffff,                     5px  0   0 #ffffff,
+    -5px  5px 0 #ffffff,  0  5px 0 #ffffff,  5px  5px 0 #ffffff,
+    0 15px 15px rgba(0,0,0,0.15);
   
   animation: popInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }

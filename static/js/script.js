@@ -248,24 +248,7 @@ const bubuAudioEl = document.getElementById("bubu-audio");
 
 let isMusicPlaying = true;
 
-if (themeToggle) {
-  const savedTheme = localStorage.getItem("dudu_theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark-mode");
-    themeToggle.textContent = "☀️";
-  }
-
-  themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    if (document.body.classList.contains("dark-mode")) {
-      localStorage.setItem("dudu_theme", "dark");
-      themeToggle.textContent = "☀️";
-    } else {
-      localStorage.setItem("dudu_theme", "light");
-      themeToggle.textContent = "🌙";
-    }
-  });
-}
+// Removed themeToggle logic
 
 if (musicToggleBtn) {
   musicToggleBtn.addEventListener("click", () => {
@@ -462,14 +445,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (bubuAudio) {
     bubuAudio.addEventListener("ended", () => {
       setTimeout(() => {
-        bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
+        if (isMusicPlaying) bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
       }, 1500);
     });
   }
 
   if (countdownAudio && bubuAudio) {
     countdownAudio.addEventListener("ended", () => {
-      bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
+      if (isMusicPlaying) bubuAudio.play().catch(e => console.log("Bubu audio play failed:", e));
     });
   }
 
@@ -488,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
         startOverlay.style.opacity = '0';
         setTimeout(() => startOverlay.remove(), 500);
         
-        if (countdownAudio) {
+        if (countdownAudio && isMusicPlaying) {
           countdownAudio.play().catch(e => console.log("Audio play failed:", e));
         
         // --- BỘ CĂN CHỈNH ĐỒNG BỘ NHẠC & SỐ ---
