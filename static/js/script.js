@@ -596,3 +596,102 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ================== 3D PHOTO ALBUM LOGIC ==================
+document.addEventListener("DOMContentLoaded", () => {
+  const albumCover = document.getElementById("albumCover");
+  const albumBook = document.getElementById("albumBook");
+  
+  if (albumCover && albumBook) {
+    albumCover.addEventListener("click", () => {
+      albumBook.classList.add("open");
+    });
+  }
+
+  const track = document.getElementById("albumTrack");
+  if (!track) return;
+
+  const slides = Array.from(track.children);
+  const nextButton = document.getElementById("btnAlbumNext");
+  const prevButton = document.getElementById("btnAlbumPrev");
+
+  if (slides.length === 0) return;
+
+  let slideWidth = slides[0].getBoundingClientRect().width;
+
+  // Arrange slides next to each other
+  const setSlidePosition = (slide, index) => {
+    slide.style.left = slideWidth * index + 'px';
+  };
+  slides.forEach(setSlidePosition);
+
+  // Re-calculate on resize
+  window.addEventListener('resize', () => {
+    if(slides.length === 0) return;
+    slideWidth = slides[0].getBoundingClientRect().width;
+    slides.forEach(setSlidePosition);
+    const currentSlide = track.querySelector('.current-slide');
+    if (currentSlide) {
+      track.style.transform = 'translateX(-' + currentSlide.style.left + ')';
+    }
+  });
+
+  const moveToSlide = (track, currentSlide, targetSlide) => {
+    track.style.transform = 'translateX(-' + targetSlide.style.left + ')';
+    currentSlide.classList.remove('current-slide');
+    targetSlide.classList.add('current-slide');
+  };
+
+  const updateDotsAndArrows = (slides, prevBtn, nextBtn, targetIndex) => {
+    if (!prevBtn || !nextBtn) return;
+    if (targetIndex === 0) {
+      prevBtn.classList.add('hidden');
+      nextBtn.classList.remove('hidden');
+    } else if (targetIndex === slides.length - 1) {
+      prevBtn.classList.remove('hidden');
+      nextBtn.classList.add('hidden');
+    } else {
+      prevBtn.classList.remove('hidden');
+      nextBtn.classList.remove('hidden');
+    }
+    
+    // If there is only 1 slide
+    if (slides.length <= 1) {
+      nextBtn.classList.add('hidden');
+      prevBtn.classList.add('hidden');
+    }
+  };
+
+  // Click Right
+  if (nextButton) {
+    nextButton.addEventListener('click', e => {
+      const currentSlide = track.querySelector('.current-slide') || slides[0];
+      let nextSlide = currentSlide.nextElementSibling;
+      if (!nextSlide) return; // reached end
+      
+      const currentSlideIndex = slides.findIndex(s => s === currentSlide);
+      const nextIndex = currentSlideIndex + 1;
+
+      moveToSlide(track, currentSlide, nextSlide);
+      updateDotsAndArrows(slides, prevButton, nextButton, nextIndex);
+    });
+  }
+
+  // Click Left
+  if (prevButton) {
+    prevButton.addEventListener('click', e => {
+      const currentSlide = track.querySelector('.current-slide') || slides[0];
+      const prevSlide = currentSlide.previousElementSibling;
+      if (!prevSlide) return; // reached start
+
+      const currentSlideIndex = slides.findIndex(s => s === currentSlide);
+      const prevIndex = currentSlideIndex - 1;
+
+      moveToSlide(track, currentSlide, prevSlide);
+      updateDotsAndArrows(slides, prevButton, nextButton, prevIndex);
+    });
+  }
+  
+  // Initialize arrows
+  updateDotsAndArrows(slides, prevButton, nextButton, 0);
+});

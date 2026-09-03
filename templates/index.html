@@ -131,40 +131,73 @@
   </section>
 </div>
 
-<!-- SCREEN 2: TIMELINE & GALLERY -->
-<div id="screen-2" class="screen" style="min-height: auto;">
-  <section class="section timeline-section">
-    <h2>📸 Thước Phim Kỷ Niệm Cùng Anh Gấu Dudu Koi 🐻</h2>
-    <div class="timeline">
-      {% for m in memories %}
-      <div class="timeline-item {% if loop.index % 2 == 0 %}right{% else %}left{% endif %}">
-        <div class="timeline-card">
-          <span class="timeline-date">🌟 {{ m.date }}</span>
-          <div class="timeline-img-wrap">
-            <img src="{{ url_for('static', filename='images/' ~ m.image) }}"
-                 alt="{{ m.title }}"
-                 onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ loop.index }}/400/250'">
+<!-- SCREEN 2: ALBUM 3D -->
+<div id="screen-2" class="screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+  <section class="section album-section">
+    
+    <div class="album-wrapper">
+      <div class="album-book" id="albumBook">
+        <!-- Bìa Sách -->
+        <div class="album-cover" id="albumCover">
+          <div class="cover-front">
+            <h2>Album Kỷ Niệm</h2>
+            <div class="cover-decoration">
+              <div class="line"></div>
+              <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
+              <div class="line"></div>
+            </div>
+            <p>Nhấn để mở 💖</p>
           </div>
-          <h3>{{ m.title }}</h3>
-          <p>{{ m.description }}</p>
+          <div class="cover-back"></div>
+        </div>
+        
+        <!-- Nội dung Sách (Carousel) -->
+        <div class="album-content" id="albumContent">
+          
+          <div class="carousel-track-container">
+            <ul class="carousel-track" id="albumTrack">
+              
+              <!-- Render Memories -->
+              {% for m in memories %}
+              <li class="carousel-slide {% if loop.first %}current-slide{% endif %}">
+                <div class="polaroid-card">
+                  <div class="polaroid-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/' ~ m.image) }}" alt="{{ m.title }}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ loop.index }}/400/400'">
+                  </div>
+                  <div class="polaroid-text">
+                    <div class="p-date">🌟 {{ m.date }}</div>
+                    <h3>{{ m.title }}</h3>
+                    <p>{{ m.description }}</p>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+              
+              <!-- Render Gallery Images -->
+              {% for img in gallery_images %}
+              <li class="carousel-slide {% if loop.first and not memories %}current-slide{% endif %}">
+                <div class="polaroid-card">
+                  <div class="polaroid-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/' ~ img) }}" alt="Kỷ niệm" onerror="this.onerror=null; this.src='https://picsum.photos/seed/g{{ loop.index }}/400/400'">
+                  </div>
+                  <div class="polaroid-text">
+                    <h3>Dudu & Bé</h3>
+                    <p>Khoảnh khắc đáng yêu 💖</p>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+              
+            </ul>
+          </div>
+          
+          <button class="album-nav album-prev hidden" id="btnAlbumPrev">❮</button>
+          <button class="album-nav album-next" id="btnAlbumNext">❯</button>
+          
         </div>
       </div>
-      {% endfor %}
     </div>
-  </section>
-
-  <!-- GALLERY -->
-  <section class="section gallery-section">
-    <h2>🖼️ Album Ảnh Rực Rỡ Của Anh Gấu 🐻</h2>
-    <div class="gallery-grid">
-      {% for img in gallery_images %}
-      <div class="gallery-item">
-        <img src="{{ url_for('static', filename='images/' ~ img) }}"
-             alt="Kỷ niệm"
-             onerror="this.onerror=null; this.src='https://picsum.photos/seed/g{{ loop.index }}/300/300'">
-      </div>
-      {% endfor %}
-    </div>
+    
   </section>
 
   <footer class="footer">
