@@ -602,7 +602,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof albumData === 'undefined') return;
   const flipbook    = document.getElementById("flipbook");
   const fbPages     = document.getElementById("flipbookPages");
-  const btnClose    = document.getElementById("btnCloseAlbum");
+  const albumControls = document.getElementById("albumControls");
   const btnPrev     = document.getElementById("btnFlipPrev");
   const btnNext     = document.getElementById("btnFlipNext");
   if (!flipbook || !fbPages) return;
@@ -619,17 +619,21 @@ document.addEventListener("DOMContentLoaded", () => {
     albumData.push({ image: `https://picsum.photos/seed/${s}${albumData.length}/300/300`, title: '', desc: '' });
   }
 
+  // Polaroid rotations
+  const ROTS = ['-2.5deg', '1.8deg', '-1.2deg', '2.2deg'];
+
   // ===== Render 2×2 grid of photos for one side =====
   const renderSide = (items, leaf, side) => {
     let g = '<div class="fb-photo-grid">';
     items.forEach((item, i) => {
+      const rot = ROTS[i % ROTS.length];
       const s = `lf${leaf}_${side}_${i}`;
-      if (!item) { g += '<div class="fb-photo-cell empty"></div>'; return; }
-      g += `<div class="fb-photo-cell">
+      if (!item) { g += `<div class="fb-photo-cell empty" style="--rot:${rot}"></div>`; return; }
+      g += `<div class="fb-photo-cell" style="--rot:${rot}">
         <div class="fb-photo-img-wrap">
           <img src="${item.image}" loading="lazy" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${s}/300/300'">
         </div>
-        ${item.title ? `<div class="fb-photo-caption">${item.title}</div>` : ''}
+        ${item.title ? `<div class="fb-photo-caption">${item.title}</div>` : '<div class="fb-photo-caption">&nbsp;</div>'}
       </div>`;
     });
     g += '</div>';
@@ -690,18 +694,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const syncUI = () => {
     if (cur === 0) {
-      hide(btnClose); hide(btnPrev); hide(btnNext);
+      if (albumControls) {
+        albumControls.style.opacity = '0';
+        albumControls.style.pointerEvents = 'none';
+      }
+      if (btnPrev) btnPrev.style.visibility = 'hidden';
+      if (btnNext) btnNext.style.visibility = 'hidden';
       flipbook.classList.remove('open');
     } else {
-      show(btnClose);
-      cur <= 1   ? hide(btnPrev) : show(btnPrev);
-      cur >= pages.length - 1 ? hide(btnNext) : show(btnNext);
+      if (albumControls) {
+        albumControls.style.opacity = '1';
+        albumControls.style.pointerEvents = 'auto';
+      }
+      if (btnPrev) btnPrev.style.visibility = cur <= 1 ? 'hidden' : 'visible';
+      if (btnNext) btnNext.style.visibility = cur >= pages.length - 1 ? 'hidden' : 'visible';
     }
   };
 
   const flipNext = () => {
     if (cur >= pages.length - 1) return;
     if (cur === 0) flipbook.classList.add('open');
+    
+    // Fix z-index so the left page stays on top of the previously flipped left page
+    pages[cur].style.zIndex = 300 + cur;
     pages[cur].classList.add('flipped');
     cur++;
     syncUI();
@@ -711,6 +726,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cur <= 0) return;
     cur--;
     pages[cur].classList.remove('flipped');
+    
+    // Restore original z-index
+    // Cover was 200, inner pages were 199 - leaf, back cover was 1
+    // We can just calculate based on pages.length
+    if (cur === 0) {
+      pages[cur].style.zIndex = 200;
+    } else if (cur === pages.length - 1) {
+      pages[cur].style.zIndex = 1;
+    } else {
+      pages[cur].style.zIndex = 199 - (cur - 1);
+    }
+    
     if (cur === 0) flipbook.classList.remove('open');
     syncUI();
   };
@@ -718,13 +745,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Click on COVER to open
   pages[0].addEventListener('click', () => { if (cur === 0) flipNext(); });
 
-  // Click RIGHT half of the open book → next page
-  // Click LEFT half → prev page
+  // Click RIGHT half of screen → next page, LEFT half → prev page
   flipbook.addEventListener('click', e => {
     if (cur === 0) return; // cover handles its own click
-    const rect = flipbook.getBoundingClientRect();
-    const midX = rect.left + rect.width / 2;
-    if (e.clientX > midX) {
+    const midX = window.innerWidth / 2;
+    if (e.clientX >= midX) {
       flipNext();
     } else {
       flipPrev();
@@ -734,15 +759,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Button controls
   if (btnNext) btnNext.addEventListener('click', e => { e.stopPropagation(); flipNext(); });
   if (btnPrev) btnPrev.addEventListener('click', e => { e.stopPropagation(); flipPrev(); });
-  if (btnClose) {
-    btnClose.addEventListener('click', e => {
-      e.stopPropagation();
-      pages.forEach(p => p.classList.remove('flipped'));
-      cur = 0;
-      flipbook.classList.remove('open');
-      syncUI();
-    });
-  }
 
   syncUI();
 });
