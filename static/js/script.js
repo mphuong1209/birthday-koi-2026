@@ -582,6 +582,11 @@ document.addEventListener("DOMContentLoaded", () => {
           preIntro.style.visibility = 'hidden';
           document.body.style.overflow = "auto"; 
           setTimeout(() => preIntro.remove(), 1000);
+          
+          const floatingControls = document.getElementById("floatingControls");
+          if (floatingControls) {
+            floatingControls.classList.remove("hidden");
+          }
         }, 5000);
             }
           }
