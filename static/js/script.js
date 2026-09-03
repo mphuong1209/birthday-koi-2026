@@ -600,149 +600,149 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== 3D FLIPBOOK ALBUM LOGIC ==================
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof albumData === 'undefined') return;
-  const flipbook = document.getElementById("flipbook");
-  const flipbookPages = document.getElementById("flipbookPages");
-  const btnClose = document.getElementById("btnCloseAlbum");
-  const albumControls = document.getElementById("albumControls");
-  const btnPrev = document.getElementById("btnFlipPrev");
-  const btnNext = document.getElementById("btnFlipNext");
-  
-  if (!flipbook || !flipbookPages) return;
+  const flipbook    = document.getElementById("flipbook");
+  const fbPages     = document.getElementById("flipbookPages");
+  const btnClose    = document.getElementById("btnCloseAlbum");
+  const btnPrev     = document.getElementById("btnFlipPrev");
+  const btnNext     = document.getElementById("btnFlipNext");
+  if (!flipbook || !fbPages) return;
 
-  // 1. Generate HTML
-  let html = '';
-  
-  // Cover Page (Index 0)
-  html += `
-    <div class="fb-page fb-page-cover" style="z-index: 100;">
-      <div class="fb-front">
-        <h2>Album Kỷ Niệm</h2>
-        <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
-        <p>Nhấn để mở 💖</p>
-      </div>
-      <div class="fb-back"></div>
-    </div>
-  `;
+  // ===== Config =====
+  const PER_SIDE   = 4;
+  const NUM_LEAVES = 12;
+  const TOTAL      = NUM_LEAVES * 2 * PER_SIDE;
 
-  // Calculate pages
-  const numItems = albumData.length;
-  const numPages = Math.ceil(numItems / 2);
-  
-  for (let i = 0; i < numPages; i++) {
-    const frontItem = albumData[i * 2];
-    const backItem = albumData[i * 2 + 1];
-    const zIndex = 99 - i; // lower z-index as we go deeper
-    
-    html += `<div class="fb-page" style="z-index: ${zIndex};">`;
-    
-    // Front Face
-    html += `<div class="fb-front"><div class="fb-page-content">`;
-    if (frontItem) {
-      html += `
-        <div class="polaroid-card">
-          <div class="polaroid-img-wrapper">
-            <img src="${frontItem.image}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/${i*2}/400/400'">
-          </div>
-          <div class="polaroid-text">
-            ${frontItem.date ? `<div class="p-date">🌟 ${frontItem.date}</div>` : ''}
-            <h3>${frontItem.title || 'Dudu & Bé'}</h3>
-            <p>${frontItem.desc || 'Khoảnh khắc đáng yêu 💖'}</p>
-          </div>
-        </div>
-      `;
-    }
-    html += `</div></div>`;
-    
-    // Back Face
-    html += `<div class="fb-back"><div class="fb-page-content">`;
-    if (backItem) {
-      html += `
-        <div class="polaroid-card">
-          <div class="polaroid-img-wrapper">
-            <img src="${backItem.image}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/${i*2+1}/400/400'">
-          </div>
-          <div class="polaroid-text">
-            ${backItem.date ? `<div class="p-date">🌟 ${backItem.date}</div>` : ''}
-            <h3>${backItem.title || 'Dudu & Bé'}</h3>
-            <p>${backItem.desc || 'Khoảnh khắc đáng yêu 💖'}</p>
-          </div>
-        </div>
-      `;
-    }
-    html += `</div></div>`;
-    
-    html += `</div>`;
+  // ===== Fill up albumData =====
+  const seeds = ['aa','bb','cc','dd','ee','ff','gg','hh','ii','jj'];
+  while (albumData.length < TOTAL) {
+    const s = seeds[albumData.length % seeds.length];
+    albumData.push({ image: `https://picsum.photos/seed/${s}${albumData.length}/300/300`, title: '', desc: '' });
   }
-  
-  // Back Cover
-  html += `
-    <div class="fb-page fb-page-cover" style="z-index: 1;">
-      <div class="fb-front"></div>
-      <div class="fb-back" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);"></div>
+
+  // ===== Render 2×2 grid of photos for one side =====
+  const renderSide = (items, leaf, side) => {
+    let g = '<div class="fb-photo-grid">';
+    items.forEach((item, i) => {
+      const s = `lf${leaf}_${side}_${i}`;
+      if (!item) { g += '<div class="fb-photo-cell empty"></div>'; return; }
+      g += `<div class="fb-photo-cell">
+        <div class="fb-photo-img-wrap">
+          <img src="${item.image}" loading="lazy" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${s}/300/300'">
+        </div>
+        ${item.title ? `<div class="fb-photo-caption">${item.title}</div>` : ''}
+      </div>`;
+    });
+    g += '</div>';
+    return g;
+  };
+
+  // ===== Build HTML =====
+  let html = '';
+
+  // Cover
+  html += `<div class="fb-page fb-page-cover" style="z-index:200;" data-index="0">
+    <div class="fb-front fb-cover-inner">
+      <div class="fb-cover-spine"></div>
+      <div class="fb-cover-content">
+        <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
+        <h2>Album Kỷ Niệm</h2>
+        <p class="cover-subtitle">Dudu &amp; Bé 💖</p>
+        <div class="cover-open-hint">✦ Nhấn để mở ✦</div>
+      </div>
     </div>
-  `;
+    <div class="fb-back fb-cover-back-inner"></div>
+  </div>`;
 
-  flipbookPages.innerHTML = html;
+  // Inner leaves
+  for (let leaf = 0; leaf < NUM_LEAVES; leaf++) {
+    const z          = 199 - leaf;
+    const fi         = leaf * 2 * PER_SIDE;
+    const bi         = fi + PER_SIDE;
+    const frontItems = albumData.slice(fi, fi + PER_SIDE);
+    const backItems  = albumData.slice(bi, bi + PER_SIDE);
 
-  // 2. Logic to flip pages
-  const pages = document.querySelectorAll('.fb-page');
-  let currentPage = 0; // 0 = Cover closed
+    html += `<div class="fb-page" style="z-index:${z};" data-index="${leaf + 1}">
+      <div class="fb-front">${renderSide(frontItems, leaf, 'f')}</div>
+      <div class="fb-back">${renderSide(backItems, leaf, 'b')}</div>
+    </div>`;
+  }
 
-  const updateControls = () => {
-    if (currentPage === 0) {
-      albumControls.classList.remove('open');
-      btnClose.classList.add('hidden');
-      btnPrev.classList.add('hidden');
-      btnNext.classList.add('hidden'); // hidden until they click cover
+  // Back Cover
+  html += `<div class="fb-page fb-page-cover" style="z-index:1;" data-index="${NUM_LEAVES + 1}">
+    <div class="fb-front"></div>
+    <div class="fb-back fb-back-cover-inner">
+      <div class="fb-cover-content">
+        <p style="font-size:2rem;">💖</p>
+        <p>Đến đây thôi nhé~</p>
+        <p style="font-size:0.85rem;opacity:0.7;">Cảm ơn vì tất cả những kỷ niệm ❤️</p>
+      </div>
+    </div>
+  </div>`;
+
+  fbPages.innerHTML = html;
+
+  // ===== Flip logic =====
+  const pages = fbPages.querySelectorAll('.fb-page');
+  let cur = 0; // index into pages[]
+
+  const show = el => { if (el) { el.style.display = ''; el.style.opacity = '1'; } };
+  const hide = el => { if (el) { el.style.display = 'none'; } };
+
+  const syncUI = () => {
+    if (cur === 0) {
+      hide(btnClose); hide(btnPrev); hide(btnNext);
+      flipbook.classList.remove('open');
     } else {
-      albumControls.classList.add('open');
-      btnClose.classList.remove('hidden');
-      btnPrev.classList.remove('hidden');
-      if (currentPage >= pages.length - 1) {
-        btnNext.classList.add('hidden');
-      } else {
-        btnNext.classList.remove('hidden');
-      }
+      show(btnClose);
+      cur <= 1   ? hide(btnPrev) : show(btnPrev);
+      cur >= pages.length - 1 ? hide(btnNext) : show(btnNext);
     }
   };
 
-  const flipToNext = () => {
-    if (currentPage >= pages.length - 1) return;
-    if (currentPage === 0) flipbook.classList.add("open");
-    pages[currentPage].classList.add('flipped');
-    currentPage++;
-    updateControls();
+  const flipNext = () => {
+    if (cur >= pages.length - 1) return;
+    if (cur === 0) flipbook.classList.add('open');
+    pages[cur].classList.add('flipped');
+    cur++;
+    syncUI();
   };
 
-  const flipToPrev = () => {
-    if (currentPage <= 0) return;
-    currentPage--;
-    pages[currentPage].classList.remove('flipped');
-    if (currentPage === 0) {
-      flipbook.classList.remove("open");
+  const flipPrev = () => {
+    if (cur <= 0) return;
+    cur--;
+    pages[cur].classList.remove('flipped');
+    if (cur === 0) flipbook.classList.remove('open');
+    syncUI();
+  };
+
+  // Click on COVER to open
+  pages[0].addEventListener('click', () => { if (cur === 0) flipNext(); });
+
+  // Click RIGHT half of the open book → next page
+  // Click LEFT half → prev page
+  flipbook.addEventListener('click', e => {
+    if (cur === 0) return; // cover handles its own click
+    const rect = flipbook.getBoundingClientRect();
+    const midX = rect.left + rect.width / 2;
+    if (e.clientX > midX) {
+      flipNext();
+    } else {
+      flipPrev();
     }
-    updateControls();
-  };
-
-  // Click on the cover to open
-  pages[0].addEventListener('click', () => {
-    if (currentPage === 0) flipToNext();
   });
 
-  if (btnNext) btnNext.addEventListener('click', flipToNext);
-  if (btnPrev) btnPrev.addEventListener('click', flipToPrev);
-
+  // Button controls
+  if (btnNext) btnNext.addEventListener('click', e => { e.stopPropagation(); flipNext(); });
+  if (btnPrev) btnPrev.addEventListener('click', e => { e.stopPropagation(); flipPrev(); });
   if (btnClose) {
-    btnClose.addEventListener('click', () => {
-      // close all pages
-      for (let i = 0; i < pages.length; i++) {
-        pages[i].classList.remove('flipped');
-      }
-      currentPage = 0;
-      flipbook.classList.remove("open");
-      updateControls();
+    btnClose.addEventListener('click', e => {
+      e.stopPropagation();
+      pages.forEach(p => p.classList.remove('flipped'));
+      cur = 0;
+      flipbook.classList.remove('open');
+      syncUI();
     });
   }
-  
-  updateControls();
+
+  syncUI();
 });
