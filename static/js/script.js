@@ -597,101 +597,152 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ================== 3D PHOTO ALBUM LOGIC ==================
+// ================== 3D FLIPBOOK ALBUM LOGIC ==================
 document.addEventListener("DOMContentLoaded", () => {
-  const albumCover = document.getElementById("albumCover");
-  const albumBook = document.getElementById("albumBook");
+  if (typeof albumData === 'undefined') return;
+  const flipbook = document.getElementById("flipbook");
+  const flipbookPages = document.getElementById("flipbookPages");
+  const btnClose = document.getElementById("btnCloseAlbum");
+  const albumControls = document.getElementById("albumControls");
+  const btnPrev = document.getElementById("btnFlipPrev");
+  const btnNext = document.getElementById("btnFlipNext");
   
-  if (albumCover && albumBook) {
-    albumCover.addEventListener("click", () => {
-      albumBook.classList.add("open");
-    });
-  }
+  if (!flipbook || !flipbookPages) return;
 
-  const track = document.getElementById("albumTrack");
-  if (!track) return;
+  // 1. Generate HTML
+  let html = '';
+  
+  // Cover Page (Index 0)
+  html += `
+    <div class="fb-page fb-page-cover" style="z-index: 100;">
+      <div class="fb-front">
+        <h2>Album Kỷ Niệm</h2>
+        <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
+        <p>Nhấn để mở 💖</p>
+      </div>
+      <div class="fb-back"></div>
+    </div>
+  `;
 
-  const slides = Array.from(track.children);
-  const nextButton = document.getElementById("btnAlbumNext");
-  const prevButton = document.getElementById("btnAlbumPrev");
-
-  if (slides.length === 0) return;
-
-  let slideWidth = slides[0].getBoundingClientRect().width;
-
-  // Arrange slides next to each other
-  const setSlidePosition = (slide, index) => {
-    slide.style.left = slideWidth * index + 'px';
-  };
-  slides.forEach(setSlidePosition);
-
-  // Re-calculate on resize
-  window.addEventListener('resize', () => {
-    if(slides.length === 0) return;
-    slideWidth = slides[0].getBoundingClientRect().width;
-    slides.forEach(setSlidePosition);
-    const currentSlide = track.querySelector('.current-slide');
-    if (currentSlide) {
-      track.style.transform = 'translateX(-' + currentSlide.style.left + ')';
+  // Calculate pages
+  const numItems = albumData.length;
+  const numPages = Math.ceil(numItems / 2);
+  
+  for (let i = 0; i < numPages; i++) {
+    const frontItem = albumData[i * 2];
+    const backItem = albumData[i * 2 + 1];
+    const zIndex = 99 - i; // lower z-index as we go deeper
+    
+    html += `<div class="fb-page" style="z-index: ${zIndex};">`;
+    
+    // Front Face
+    html += `<div class="fb-front"><div class="fb-page-content">`;
+    if (frontItem) {
+      html += `
+        <div class="polaroid-card">
+          <div class="polaroid-img-wrapper">
+            <img src="${frontItem.image}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/${i*2}/400/400'">
+          </div>
+          <div class="polaroid-text">
+            ${frontItem.date ? `<div class="p-date">🌟 ${frontItem.date}</div>` : ''}
+            <h3>${frontItem.title || 'Dudu & Bé'}</h3>
+            <p>${frontItem.desc || 'Khoảnh khắc đáng yêu 💖'}</p>
+          </div>
+        </div>
+      `;
     }
+    html += `</div></div>`;
+    
+    // Back Face
+    html += `<div class="fb-back"><div class="fb-page-content">`;
+    if (backItem) {
+      html += `
+        <div class="polaroid-card">
+          <div class="polaroid-img-wrapper">
+            <img src="${backItem.image}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/${i*2+1}/400/400'">
+          </div>
+          <div class="polaroid-text">
+            ${backItem.date ? `<div class="p-date">🌟 ${backItem.date}</div>` : ''}
+            <h3>${backItem.title || 'Dudu & Bé'}</h3>
+            <p>${backItem.desc || 'Khoảnh khắc đáng yêu 💖'}</p>
+          </div>
+        </div>
+      `;
+    }
+    html += `</div></div>`;
+    
+    html += `</div>`;
+  }
+  
+  // Back Cover
+  html += `
+    <div class="fb-page fb-page-cover" style="z-index: 1;">
+      <div class="fb-front"></div>
+      <div class="fb-back" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);"></div>
+    </div>
+  `;
+
+  flipbookPages.innerHTML = html;
+
+  // 2. Logic to flip pages
+  const pages = document.querySelectorAll('.fb-page');
+  let currentPage = 0; // 0 = Cover closed
+
+  const updateControls = () => {
+    if (currentPage === 0) {
+      albumControls.classList.remove('open');
+      btnClose.classList.add('hidden');
+      btnPrev.classList.add('hidden');
+      btnNext.classList.add('hidden'); // hidden until they click cover
+    } else {
+      albumControls.classList.add('open');
+      btnClose.classList.remove('hidden');
+      btnPrev.classList.remove('hidden');
+      if (currentPage >= pages.length - 1) {
+        btnNext.classList.add('hidden');
+      } else {
+        btnNext.classList.remove('hidden');
+      }
+    }
+  };
+
+  const flipToNext = () => {
+    if (currentPage >= pages.length - 1) return;
+    if (currentPage === 0) flipbook.classList.add("open");
+    pages[currentPage].classList.add('flipped');
+    currentPage++;
+    updateControls();
+  };
+
+  const flipToPrev = () => {
+    if (currentPage <= 0) return;
+    currentPage--;
+    pages[currentPage].classList.remove('flipped');
+    if (currentPage === 0) {
+      flipbook.classList.remove("open");
+    }
+    updateControls();
+  };
+
+  // Click on the cover to open
+  pages[0].addEventListener('click', () => {
+    if (currentPage === 0) flipToNext();
   });
 
-  const moveToSlide = (track, currentSlide, targetSlide) => {
-    track.style.transform = 'translateX(-' + targetSlide.style.left + ')';
-    currentSlide.classList.remove('current-slide');
-    targetSlide.classList.add('current-slide');
-  };
+  if (btnNext) btnNext.addEventListener('click', flipToNext);
+  if (btnPrev) btnPrev.addEventListener('click', flipToPrev);
 
-  const updateDotsAndArrows = (slides, prevBtn, nextBtn, targetIndex) => {
-    if (!prevBtn || !nextBtn) return;
-    if (targetIndex === 0) {
-      prevBtn.classList.add('hidden');
-      nextBtn.classList.remove('hidden');
-    } else if (targetIndex === slides.length - 1) {
-      prevBtn.classList.remove('hidden');
-      nextBtn.classList.add('hidden');
-    } else {
-      prevBtn.classList.remove('hidden');
-      nextBtn.classList.remove('hidden');
-    }
-    
-    // If there is only 1 slide
-    if (slides.length <= 1) {
-      nextBtn.classList.add('hidden');
-      prevBtn.classList.add('hidden');
-    }
-  };
-
-  // Click Right
-  if (nextButton) {
-    nextButton.addEventListener('click', e => {
-      const currentSlide = track.querySelector('.current-slide') || slides[0];
-      let nextSlide = currentSlide.nextElementSibling;
-      if (!nextSlide) return; // reached end
-      
-      const currentSlideIndex = slides.findIndex(s => s === currentSlide);
-      const nextIndex = currentSlideIndex + 1;
-
-      moveToSlide(track, currentSlide, nextSlide);
-      updateDotsAndArrows(slides, prevButton, nextButton, nextIndex);
-    });
-  }
-
-  // Click Left
-  if (prevButton) {
-    prevButton.addEventListener('click', e => {
-      const currentSlide = track.querySelector('.current-slide') || slides[0];
-      const prevSlide = currentSlide.previousElementSibling;
-      if (!prevSlide) return; // reached start
-
-      const currentSlideIndex = slides.findIndex(s => s === currentSlide);
-      const prevIndex = currentSlideIndex - 1;
-
-      moveToSlide(track, currentSlide, prevSlide);
-      updateDotsAndArrows(slides, prevButton, nextButton, prevIndex);
+  if (btnClose) {
+    btnClose.addEventListener('click', () => {
+      // close all pages
+      for (let i = 0; i < pages.length; i++) {
+        pages[i].classList.remove('flipped');
+      }
+      currentPage = 0;
+      flipbook.classList.remove("open");
+      updateControls();
     });
   }
   
-  // Initialize arrows
-  updateDotsAndArrows(slides, prevButton, nextButton, 0);
+  updateControls();
 });

@@ -136,68 +136,39 @@
   <section class="section album-section">
     
     <div class="album-wrapper">
-      <div class="album-book" id="albumBook">
-        <!-- Bìa Sách -->
-        <div class="album-cover" id="albumCover">
-          <div class="cover-front">
-            <h2>Album Kỷ Niệm</h2>
-            <div class="cover-decoration">
-              <div class="line"></div>
-              <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
-              <div class="line"></div>
-            </div>
-            <p>Nhấn để mở 💖</p>
-          </div>
-          <div class="cover-back"></div>
+      <div class="flipbook" id="flipbook">
+        <div class="flipbook-pages" id="flipbookPages">
+          <!-- Pages dynamically injected by JS -->
         </div>
-        
-        <!-- Nội dung Sách (Carousel) -->
-        <div class="album-content" id="albumContent">
-          
-          <div class="carousel-track-container">
-            <ul class="carousel-track" id="albumTrack">
-              
-              <!-- Render Memories -->
-              {% for m in memories %}
-              <li class="carousel-slide {% if loop.first %}current-slide{% endif %}">
-                <div class="polaroid-card">
-                  <div class="polaroid-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/' ~ m.image) }}" alt="{{ m.title }}" onerror="this.onerror=null; this.src='https://picsum.photos/seed/{{ loop.index }}/400/400'">
-                  </div>
-                  <div class="polaroid-text">
-                    <div class="p-date">🌟 {{ m.date }}</div>
-                    <h3>{{ m.title }}</h3>
-                    <p>{{ m.description }}</p>
-                  </div>
-                </div>
-              </li>
-              {% endfor %}
-              
-              <!-- Render Gallery Images -->
-              {% for img in gallery_images %}
-              <li class="carousel-slide {% if loop.first and not memories %}current-slide{% endif %}">
-                <div class="polaroid-card">
-                  <div class="polaroid-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/' ~ img) }}" alt="Kỷ niệm" onerror="this.onerror=null; this.src='https://picsum.photos/seed/g{{ loop.index }}/400/400'">
-                  </div>
-                  <div class="polaroid-text">
-                    <h3>Dudu & Bé</h3>
-                    <p>Khoảnh khắc đáng yêu 💖</p>
-                  </div>
-                </div>
-              </li>
-              {% endfor %}
-              
-            </ul>
-          </div>
-          
-          <button class="album-nav album-prev hidden" id="btnAlbumPrev">❮</button>
-          <button class="album-nav album-next" id="btnAlbumNext">❯</button>
-          
-        </div>
+        <button class="album-close-btn hidden" id="btnCloseAlbum">✖</button>
+      </div>
+      
+      <div class="album-controls hidden" id="albumControls">
+        <button id="btnFlipPrev" class="album-nav">❮</button>
+        <button id="btnFlipNext" class="album-nav">❯</button>
       </div>
     </div>
     
+    <script>
+      const albumData = [];
+      {% for m in memories %}
+      albumData.push({
+        type: 'memory',
+        image: "{{ url_for('static', filename='images/' ~ m.image) }}",
+        title: "{{ m.title | replace('\"', '\\\"') | safe }}",
+        date: "{{ m.date | replace('\"', '\\\"') | safe }}",
+        desc: "{{ m.description | replace('\"', '\\\"') | safe }}"
+      });
+      {% endfor %}
+      
+      {% for img in gallery_images %}
+      albumData.push({
+        type: 'gallery',
+        image: "{{ url_for('static', filename='images/' ~ img) }}"
+      });
+      {% endfor %}
+    </script>
+
   </section>
 
   <footer class="footer">
