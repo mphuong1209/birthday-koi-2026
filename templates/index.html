@@ -76,7 +76,6 @@
         <div class="wish-title">✨ Anh gấu ước điều gì cho tuổi mới? 🐻</div>
         <textarea id="wishInput" class="wish-textarea" placeholder="Viết ước nguyện của anh gấu ở đây nè... Bé Minnie sẽ đọc được 💖" rows="4"></textarea>
         <button id="sendWishBtn" class="send-wish-btn">💌 Gửi ước nguyện đến Bé Minnie ✨</button>
-        <div id="wishDisplay" class="wish-display hidden"></div>
       </div>
     </div>
 
@@ -140,12 +139,6 @@
         <div class="flipbook-pages" id="flipbookPages">
           <!-- Pages dynamically injected by JS -->
         </div>
-        <!-- no close button -->
-      </div>
-      
-      <div class="album-controls" id="albumControls">
-        <button id="btnFlipPrev" class="album-nav">❮</button>
-        <button id="btnFlipNext" class="album-nav">❯</button>
       </div>
     </div>
     
@@ -189,6 +182,12 @@
   const NEXT_BDAY_TS = {{ next_bday_ts }};
   const REASONS = {{ reasons | tojson }};
 </script>
+
+<!-- SUCCESS GIF OVERLAY -->
+<div id="successGifContainer" class="hidden">
+  <img id="successGifImg" src="{{ url_for('static', filename='images/done/bubu_wish_0.webp') }}" alt="Success Bubu">
+</div>
+
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

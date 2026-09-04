@@ -152,15 +152,17 @@ const wishInput = document.getElementById("wishInput");
 const wishDisplay = document.getElementById("wishDisplay");
 
 if (sendWishBtn && wishInput) {
-  // Khôi phục ước nguyện cũ từ localStorage khi tải trang
-  const savedWish = localStorage.getItem("bearWish_dudukoi");
-  if (savedWish && wishDisplay) {
-    wishDisplay.innerHTML = "🐻 Ước nguyện của anh gấu: <em>\"" + savedWish + "\"</em> ✨";
-    wishDisplay.classList.remove("hidden");
-    if (wishForm) wishForm.classList.remove("hidden");
+  let wishCount = 0; // Luôn reset về 0 mỗi khi tải lại trang
+
+  if (wishCount >= 10) {
+    sendWishBtn.textContent = "✅ Đã hết lượt gửi ước nguyện (10/10)";
+    sendWishBtn.style.background = "#bdc3c7";
+    wishInput.disabled = true;
   }
 
   sendWishBtn.addEventListener("click", () => {
+    if (wishCount >= 10) return;
+
     const wishText = wishInput.value.trim();
     if (!wishText) {
       wishInput.focus();
@@ -168,18 +170,53 @@ if (sendWishBtn && wishInput) {
       setTimeout(() => wishInput.style.outline = "", 1500);
       return;
     }
-    localStorage.setItem("bearWish_dudukoi", wishText);
-    if (wishDisplay) {
-      wishDisplay.innerHTML = "🐻 Ước nguyện của anh gấu: <em>\"" + wishText + "\"</em> ✨";
-      wishDisplay.classList.remove("hidden");
-    }
+    
+    // Save to server
+    fetch("/api/save_wish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wish: wishText })
+    }).catch(err => console.error("Error saving wish:", err));
+
+    wishCount++;
+
     wishInput.value = "";
-    sendWishBtn.textContent = "✅ Đã gửi! Minnie đọc được rồi nè 💖";
-    sendWishBtn.style.background = "linear-gradient(135deg, #2ed573, #26af5f)";
-    setTimeout(() => {
-      sendWishBtn.textContent = "💌 Gửi ước nguyện đến Bé Minnie ✨";
-      sendWishBtn.style.background = "";
-    }, 3000);
+    
+    if (wishCount >= 10) {
+      sendWishBtn.textContent = "✅ Đã hết lượt gửi ước nguyện (10/10)";
+      sendWishBtn.style.background = "#bdc3c7";
+      wishInput.disabled = true;
+    } else {
+      sendWishBtn.textContent = `✅ Đã gửi! (${wishCount}/10) 💖`;
+      sendWishBtn.style.background = "linear-gradient(135deg, #2ed573, #26af5f)";
+      setTimeout(() => {
+        if (wishCount < 10) {
+          sendWishBtn.textContent = "💌 Gửi ước nguyện đến Bé Minnie ✨";
+          sendWishBtn.style.background = "";
+        }
+      }, 3000);
+    }
+    
+    // Trigger GIF
+    const gifContainer = document.getElementById("successGifContainer");
+    if (gifContainer) {
+      gifContainer.classList.remove("hidden");
+      gifContainer.classList.remove("gif-fade-out");
+      
+      const img = document.getElementById("successGifImg");
+      if (img) {
+        const randomIdx = Math.floor(Math.random() * 2); // 0 or 1
+        img.src = `/static/images/done/bubu_wish_${randomIdx}.webp?t=` + new Date().getTime();
+      }
+
+      setTimeout(() => {
+        gifContainer.classList.add("gif-fade-out");
+        setTimeout(() => {
+          gifContainer.classList.add("hidden");
+        }, 300); // 300ms fade out
+      }, 1200); // 1200 + 300 = 1500ms (matches confetti)
+    }
+
     launchMiniConfetti();
   });
 }
@@ -323,11 +360,85 @@ if (typewriterMessage) {
 
 // ================== BÓNG BAY GẤU NÂU HERO ==================
 const bubuDuduImages = [
-  "719942690460194314.gif", "719942690460194318.gif", "719942690460194352.png", 
-  "719942690460194354.png", "719942690460194359.png", "719942690460201009.png", 
-  "719942690460201015.png", "719942690460236956.png", "719942690460236959.png", 
-  "719942690460236960.png", "719942690460236962.png", "719942690460236963.png", 
-  "719942690460431555.png", "719942690460431591.gif", "719942690460431605_1.png"
+  "719942690460194314.gif",
+  "719942690460194318.gif",
+  "719942690460194352.png",
+  "719942690460194354.png",
+  "719942690460194359.png",
+  "719942690460201009.png",
+  "719942690460201015.png",
+  "719942690460236956.png",
+  "719942690460236959.png",
+  "719942690460236960.png",
+  "719942690460236962.png",
+  "719942690460236963.png",
+  "719942690460431555.png",
+  "719942690460431591.gif",
+  "719942690460431605_1.png",
+  "new_bubu-bubu-dudu.webp",
+  "new_bubu-bubu-dudu.webp",
+  "new_bubu-bubu-dudu_3326.webp",
+  "new_bubu-bubu-dudu_4105.webp",
+  "new_bubu-bubu-dudu_6376.webp",
+  "new_bubu-dance-bubu-dudu.webp",
+  "new_bubu-dudu-bears.webp",
+  "new_bubu-dudu-bride.webp",
+  "new_bubu-dudu-bubu-angry.webp",
+  "new_bubu-dudu-bubu-dance.webp",
+  "new_bubu-dudu-bubu-dudu-love.webp",
+  "new_bubu-dudu-bubu-kiss.webp",
+  "new_bubu-dudu-bubu.webp",
+  "new_bubu-dudu-bubu_3692.webp",
+  "new_bubu-dudu-bubu_4928.webp",
+  "new_bubu-dudu-dance-bubu-rock-dance.webp",
+  "new_bubu-dudu-dudu-bubu.webp",
+  "new_bubu-dudu-dudu-dance.webp",
+  "new_bubu-dudu-dudu-dance.webp",
+  "new_bubu-dudu-dudu.webp",
+  "new_bubu-dudu-dudu.webp",
+  "new_bubu-dudu-eyes.webp",
+  "new_bubu-dudu-head.webp",
+  "new_bubu-dudu-images-bubu-dudu-love.webp",
+  "new_bubu-dudu-kiss.webp",
+  "new_bubu-dudu-love-bubu-love-dudu.webp",
+  "new_bubu-dudu-lovely-bubu-dudu-walk.webp",
+  "new_bubu-dudu-seeyall.webp",
+  "new_bubu-dudu-sseeyall.webp",
+  "new_bubu-dudu-sseeyall_4793.webp",
+  "new_bubu-dudu-sseeyall_5878.webp",
+  "new_bubu-dudu-sseeyall_7158.webp",
+  "new_bubu-dudu-trishul.webp",
+  "new_bubu-dudu.webp",
+  "new_bubu-dudu.webp",
+  "new_bubu-dudu_3087.webp",
+  "new_bubu-dudu_5159.webp",
+  "new_bubu-dudu_5242.webp",
+  "new_bubu-dudu_6378.webp",
+  "new_bubu-dudu_6664.webp",
+  "new_bubu-dudu_8077.webp",
+  "new_bubu-dudu_9527.webp",
+  "new_bubu-kisses-dudu-bubu-dudu.webp",
+  "new_bubu-love-bubu-dudu-love.webp",
+  "new_bubu-rub-bubu-love-dudu.webp",
+  "new_bubududu-panda.webp",
+  "new_bubududu-panda.webp",
+  "new_bubududumassage.webp",
+  "new_dudu-bubu-dancing-dancung.webp",
+  "new_dudu-bubu-dancing-so-cute.webp",
+  "new_dudu-bubu-dudu.webp",
+  "new_dudu-bubu-love-gif.webp",
+  "new_dudu-bubu.webp",
+  "new_dudu-dancing-bubu-dudu-dancing.webp",
+  "new_dudu-dancing-dudu.webp",
+  "new_dudu-dancing.webp",
+  "new_dudu-ride-bubu-bubu-dudu-ride.webp",
+  "new_dudu-sleep-dudu-bubu.webp",
+  "new_tkthao219-bubududu.webp",
+  "new_tkthao219-bubududu_1153.webp",
+  "new_tkthao219-bubududu_1415.webp",
+  "new_tkthao219-bubududu_3944.webp",
+  "new_tkthao219-bubududu_7060.webp",
+  "new_tkthao219-bubududu_8185.webp"
 ];
 
 function spawnFloatingBalloon() {
@@ -407,28 +518,41 @@ function launchConfetti() {
 }
 
 function launchMiniConfetti() {
-  const canvas = document.getElementById("confetti-canvas");
-  if (!canvas) return;
-  const colors = ["#ff4757", "#ffa502", "#70a1ff", "#ff6b81", "#2ed573"];
+  const container = document.getElementById("successGifContainer") || document.body;
+  const colors = ["#ff4757", "#ffa502", "#70a1ff", "#ff6b81", "#2ed573", "#feca57", "#ff9ff3"];
   for (let i = 0; i < 40; i++) {
     const piece = document.createElement("div");
     piece.style.position = "absolute";
-    piece.style.width = "7px";
-    piece.style.height = "12px";
+    piece.style.width = (Math.random() > 0.5 ? 8 : 6) + "px";
+    piece.style.height = (Math.random() > 0.5 ? 12 : 10) + "px";
     piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.left = "50vw";
-    piece.style.top = "50vh";
+    piece.style.left = "50%";
+    piece.style.top = "50%";
     piece.style.opacity = "1";
     piece.style.borderRadius = "2px";
-    piece.style.transition = "transform 1.3s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.3s";
-    canvas.appendChild(piece);
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 130 + Math.random() * 200;
-    requestAnimationFrame(() => {
-      piece.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 720}deg)`;
+    piece.style.zIndex = "10001";
+    piece.style.transition = "transform 1.2s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.2s ease-out";
+    
+    // Add some random rotation
+    const rotation = Math.random() * 360;
+    piece.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+    
+    container.appendChild(piece);
+    
+    // Animate out
+    setTimeout(() => {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 100 + Math.random() * 200;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const r = rotation + (Math.random() - 0.5) * 720;
+      piece.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) rotate(${r}deg)`;
       piece.style.opacity = "0";
-    });
-    setTimeout(() => piece.remove(), 1400);
+    }, 10);
+    
+    setTimeout(() => {
+      if (piece.parentNode) piece.parentNode.removeChild(piece);
+    }, 1500);
   }
 }
 
@@ -608,8 +732,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!flipbook || !fbPages) return;
 
   // ===== Config =====
-  const PER_SIDE   = 4;
-  const NUM_LEAVES = 12;
+  const PER_SIDE   = 5;
+  const NUM_LEAVES = 5;
   const TOTAL      = NUM_LEAVES * 2 * PER_SIDE;
 
   // ===== Fill up albumData =====
@@ -622,9 +746,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // Polaroid rotations
   const ROTS = ['-2.5deg', '1.8deg', '-1.2deg', '2.2deg'];
 
-  // ===== Render 2×2 grid of photos for one side =====
+  const PAGE_TITLES = {
+    1: "Ảnh photobooth bên nhau",
+    2: "Ảnh hồi còn đi học",
+    3: "Ảnh hồi còn đi học",
+    4: "Cùng nhau đi chơi",
+    5: "Cùng nhau đi chơi",
+    6: "Đi quân sự",
+    7: "Đi quân sự",
+    8: "Lần đầu tỏ tình",
+    9: "Lần đầu tỏ tình",
+    10: "Lễ tốt nghiệp"
+  };
+
+  // ===== Render grid of 5 photos for one side =====
   const renderSide = (items, leaf, side) => {
-    let g = '<div class="fb-photo-grid">';
+    let pageNum = (leaf * 2) + (side === 'f' ? 1 : 2);
+    let pageTitle = PAGE_TITLES[pageNum] || "";
+    
+    let g = `<div style="text-align:center; font-weight:bold; color:#ff4757; padding-top:15px; font-size:1.1rem; min-height: 35px;">${pageTitle}</div>`;
+    g += '<div class="fb-photo-grid">';
     items.forEach((item, i) => {
       const rot = ROTS[i % ROTS.length];
       const s = `lf${leaf}_${side}_${i}`;
@@ -633,7 +774,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="fb-photo-img-wrap">
           <img src="${item.image}" loading="lazy" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${s}/300/300'">
         </div>
-        ${item.title ? `<div class="fb-photo-caption">${item.title}</div>` : '<div class="fb-photo-caption">&nbsp;</div>'}
       </div>`;
     });
     g += '</div>';
@@ -654,7 +794,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="cover-open-hint">✦ Nhấn để mở ✦</div>
       </div>
     </div>
-    <div class="fb-back fb-cover-back-inner"></div>
+    <div class="fb-back fb-cover-back-inner" style="display:flex; justify-content:center; align-items:center; background:#ff4757; color:#fff; font-size:1.5rem; font-weight:bold; border: 4px dashed rgba(255,255,255,0.3);">
+      <div style="text-align:center;">
+        <p>Gửi ngàn</p>
+        <p>Yêu Thương 💖</p>
+      </div>
+    </div>
   </div>`;
 
   // Inner leaves
@@ -678,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="fb-cover-content">
         <p style="font-size:2rem;">💖</p>
         <p>Đến đây thôi nhé~</p>
-        <p style="font-size:0.85rem;opacity:0.7;">Cảm ơn vì tất cả những kỷ niệm ❤️</p>
+        <p style="font-size:0.85rem;opacity:0.7;">Nhấn vào đây để đóng album ❤️</p>
       </div>
     </div>
   </div>`;
@@ -689,25 +834,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const pages = fbPages.querySelectorAll('.fb-page');
   let cur = 0; // index into pages[]
 
-  const show = el => { if (el) { el.style.display = ''; el.style.opacity = '1'; } };
-  const hide = el => { if (el) { el.style.display = 'none'; } };
-
   const syncUI = () => {
     if (cur === 0) {
-      if (albumControls) {
-        albumControls.style.opacity = '0';
-        albumControls.style.pointerEvents = 'none';
-      }
-      if (btnPrev) btnPrev.style.visibility = 'hidden';
-      if (btnNext) btnNext.style.visibility = 'hidden';
       flipbook.classList.remove('open');
-    } else {
-      if (albumControls) {
-        albumControls.style.opacity = '1';
-        albumControls.style.pointerEvents = 'auto';
-      }
-      if (btnPrev) btnPrev.style.visibility = cur <= 1 ? 'hidden' : 'visible';
-      if (btnNext) btnNext.style.visibility = cur >= pages.length - 1 ? 'hidden' : 'visible';
     }
   };
 
@@ -728,8 +857,6 @@ document.addEventListener("DOMContentLoaded", () => {
     pages[cur].classList.remove('flipped');
     
     // Restore original z-index
-    // Cover was 200, inner pages were 199 - leaf, back cover was 1
-    // We can just calculate based on pages.length
     if (cur === 0) {
       pages[cur].style.zIndex = 200;
     } else if (cur === pages.length - 1) {
@@ -743,22 +870,28 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Click on COVER to open
-  pages[0].addEventListener('click', () => { if (cur === 0) flipNext(); });
+  pages[0].addEventListener('click', (e) => { 
+    if (cur === 0) {
+      flipNext(); 
+      e.stopPropagation();
+    }
+  });
 
   // Click RIGHT half of screen → next page, LEFT half → prev page
   flipbook.addEventListener('click', e => {
     if (cur === 0) return; // cover handles its own click
     const midX = window.innerWidth / 2;
     if (e.clientX >= midX) {
-      flipNext();
+      if (cur === pages.length - 1) {
+        // Close book entirely when clicking right side of last page
+        while (cur > 0) flipPrev();
+      } else {
+        flipNext();
+      }
     } else {
       flipPrev();
     }
   });
-
-  // Button controls
-  if (btnNext) btnNext.addEventListener('click', e => { e.stopPropagation(); flipNext(); });
-  if (btnPrev) btnPrev.addEventListener('click', e => { e.stopPropagation(); flipPrev(); });
 
   syncUI();
 });

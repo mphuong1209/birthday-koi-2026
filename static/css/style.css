@@ -854,16 +854,19 @@ h1, h2, h3 {
 .album-wrapper {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  height: 640px;
+  max-width: 420px;
+  height: 540px;
   margin: 0 auto;
   perspective: 2500px;
 }
 
 @media (max-width: 768px) {
   .album-wrapper {
-    height: 520px;
-    max-width: 340px;
+    height: 440px;
+    max-width: 300px;
+  }
+  .flipbook.open {
+    transform: translateX(18%);
   }
 }
 
@@ -1049,19 +1052,21 @@ h1, h2, h3 {
 
 /* ---- POLAROID PHOTO GRID ---- */
 .fb-photo-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 15px;
-  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-evenly;
+  gap: 12px;
+  padding: 12px;
   flex: 1;
   overflow: hidden;
   background: #fafafa;
 }
 
 .fb-photo-cell {
+  width: calc(48% - 6px);
   background: #fff;
-  padding: 8px 8px 24px 8px;
+  padding: 4px 4px 14px 4px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
   border-radius: 2px;
   display: flex;
@@ -1070,6 +1075,11 @@ h1, h2, h3 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   position: relative;
+}
+.fb-photo-cell:nth-child(3),
+.fb-photo-cell:nth-child(4),
+.fb-photo-cell:nth-child(5) {
+  width: calc(31.33% - 6px);
 }
 
 .fb-photo-cell:hover {
@@ -1124,6 +1134,7 @@ h1, h2, h3 {
 
 /* Navigation */
 .album-controls {
+  display: none;
   position: absolute;
   top: 50%;
   left: -20px;
@@ -1139,6 +1150,7 @@ h1, h2, h3 {
 
 @media (max-width: 768px) {
   .album-controls {
+  display: none;
     left: -10px;
     width: calc(100% + 20px);
   }
@@ -1172,6 +1184,31 @@ h1, h2, h3 {
   color: #8854d0;
   font-size: 0.95rem;
   font-weight: 600;
+}
+
+/* ---------- SUCCESS GIF CONTAINER ---------- */
+#successGifContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+#successGifContainer img {
+  width: 250px;
+  height: auto;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.3));
+}
+.gif-fade-out {
+  animation: gifFadeOut 0.3s forwards;
+}
+@keyframes gifFadeOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
 }
 
 /* ---------- FLOATING CONTROLS ---------- */
