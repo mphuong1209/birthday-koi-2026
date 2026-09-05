@@ -843,30 +843,178 @@ h1, h2, h3 {
 /* ---------- 3D TRUE FLIPBOOK ALBUM ---------- */
 .album-section {
   width: 100%;
-  max-width: 900px;
+  max-width: 1400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 30px 10px;
+  padding: 20px 15px;
+}
+
+.album-layout-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+  max-width: 1200px;
+  position: relative;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .album-wrapper {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  height: 540px;
-  margin: 0 auto;
+  max-width: 400px;
+  height: 520px;
+  margin: 0;
   perspective: 2500px;
+  flex-shrink: 0;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (max-width: 768px) {
+/* COMPANION ON THE RIGHT */
+.album-companion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 290px;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.companion-speech-bubble {
+  position: relative;
+  background: #ffffff;
+  border: 2.5px solid #8d5b4c;
+  border-radius: 20px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 25px rgba(92, 58, 33, 0.15), 0 3px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 22px;
+  text-align: center;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.companion-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 14px solid #ffffff;
+  z-index: 2;
+}
+
+.companion-speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 17px solid #8d5b4c;
+  z-index: 1;
+}
+
+.speech-text {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #4a2c20;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.speech-cursor {
+  font-weight: 700;
+  color: #8d5b4c;
+  animation: blinkCursor 0.8s infinite;
+  display: inline-block;
+  margin-left: 2px;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.companion-bear-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.companion-bear-gif {
+  width: 165px;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* When book is opened */
+@media (min-width: 993px) {
+  .album-layout-container.book-open {
+    gap: 250px;
+    max-width: 1400px;
+  }
+  /* Đẩy quyển album sang phải để trang trái không bị đè vào nút mũi tên hoặc lẹm mép trái màn hình */
+  .album-layout-container.book-open .album-wrapper {
+    transform: translateX(95px);
+  }
+  /* Đẩy chú gấu Dudu sang phải tương ứng để cân đối đều 2 mép màn hình */
+  .album-layout-container.book-open .album-companion {
+    transform: translateX(110px);
+  }
+}
+
+@media (max-width: 992px) {
+  .album-layout-container {
+    flex-direction: column-reverse;
+    gap: 25px;
+  }
+  .album-companion {
+    max-width: 320px;
+  }
   .album-wrapper {
-    height: 440px;
-    max-width: 300px;
+    max-width: 340px;
+    height: 460px;
   }
   .flipbook.open {
     transform: translateX(18%);
+  }
+}
+
+@media (max-width: 600px) {
+  .album-wrapper {
+    max-width: 280px;
+    height: 400px;
+  }
+  .companion-bear-gif {
+    width: 130px;
+  }
+  .speech-text {
+    font-size: 0.95rem;
   }
 }
 
@@ -880,12 +1028,6 @@ h1, h2, h3 {
 
 .flipbook.open {
   transform: translateX(50%);
-}
-
-@media (max-width: 768px) {
-  .flipbook.open {
-    transform: translateX(18%);
-  }
 }
 
 .flipbook-pages {
@@ -936,12 +1078,13 @@ h1, h2, h3 {
 
 /* ---- COVER ---- */
 .fb-cover-inner {
-  background: linear-gradient(145deg, #ff6b8a 0%, #ff9a9e 50%, #fecfef 100%) !important;
-  border-left: 22px solid #d63031 !important;
+  background: linear-gradient(145deg, #6e473b 0%, #543428 50%, #3e2419 100%) !important;
+  border-left: 22px solid #2e170d !important;
   text-align: center;
   justify-content: center;
   align-items: center;
   gap: 0;
+  box-shadow: inset 4px 0 15px rgba(0,0,0,0.4), 0 15px 35px rgba(0,0,0,0.3) !important;
 }
 
 .fb-cover-spine {
@@ -950,8 +1093,8 @@ h1, h2, h3 {
   top: 0;
   bottom: 0;
   width: 22px;
-  background: linear-gradient(to right, #c0392b, #e74c3c);
-  box-shadow: inset -3px 0 6px rgba(0,0,0,0.2);
+  background: linear-gradient(to right, #241209, #3e2419, #241209);
+  box-shadow: inset -3px 0 6px rgba(0,0,0,0.5), inset 2px 0 4px rgba(255,215,0,0.15);
 }
 
 .fb-cover-content {
@@ -967,41 +1110,46 @@ h1, h2, h3 {
 
 .fb-cover-inner h2 {
   font-family: 'Dancing Script', cursive;
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
-  color: white;
-  text-shadow: 2px 3px 8px rgba(0,0,0,0.25);
+  font-size: clamp(2rem, 5.5vw, 2.7rem);
+  color: #ffd700 !important;
+  text-shadow: 2px 3px 6px rgba(0,0,0,0.7), 0 0 12px rgba(255, 215, 0, 0.35) !important;
   margin: 0;
+  font-weight: 700;
 }
 
 .cover-subtitle {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.9);
-  font-weight: 600;
+  font-size: 1.15rem;
+  color: #ffeaa7 !important;
+  font-weight: 700;
+  text-shadow: 1px 2px 5px rgba(0,0,0,0.7) !important;
 }
 
 .cover-open-hint {
   margin-top: 8px;
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.75);
+  font-size: 0.9rem;
+  color: #f5cd79 !important;
   letter-spacing: 1px;
   animation: pulse 2s infinite;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.6) !important;
+  font-weight: 600;
 }
 
 .fb-cover-inner .cover-icon {
-  width: 110px;
+  width: 145px;
+  max-width: 65%;
   height: auto;
-  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
   animation: pulse 2.5s ease-in-out infinite;
 }
 
 .fb-cover-back-inner {
-  background: linear-gradient(145deg, #d63031, #ff6b81) !important;
+  background: linear-gradient(145deg, #543428, #3e2419) !important;
 }
 
 .fb-back-cover-inner {
-  background: linear-gradient(145deg, #ff6b8a 0%, #ff9a9e 50%, #fecfef 100%);
-  border-right: 22px solid #d63031;
-  color: white;
+  background: linear-gradient(145deg, #6e473b 0%, #543428 50%, #3e2419 100%) !important;
+  border-right: 22px solid #2e170d !important;
+  color: #ffd700 !important;
   text-align: center;
   align-items: center;
   justify-content: center;

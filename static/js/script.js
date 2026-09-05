@@ -98,6 +98,11 @@ function showScreen(index) {
   }
   
   // Typewriter sẽ được kích hoạt khi mở hộp quà Lời Chúc
+  if (screens[index] === "screen-2") {
+    if (typeof runAlbumCompanionTypewriter === "function") {
+      runAlbumCompanionTypewriter();
+    }
+  }
 }
 
 if (prevBtn) {
@@ -788,16 +793,16 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="fb-front fb-cover-inner">
       <div class="fb-cover-spine"></div>
       <div class="fb-cover-content">
-        <img src="/static/images/dudu-face.png" class="cover-icon" alt="Dudu" onerror="this.style.display='none'">
+        <img src="/static/images/bubu-sit-on-dudu.png" class="cover-icon" alt="Motka Koi &amp; Motki Minnie" onerror="this.style.display='none'">
         <h2>Album Kỷ Niệm</h2>
-        <p class="cover-subtitle">Dudu &amp; Bé 💖</p>
+        <p class="cover-subtitle">Motka Koi 🐻 &amp; Motki Minnie 🐼</p>
         <div class="cover-open-hint">✦ Nhấn để mở ✦</div>
       </div>
     </div>
-    <div class="fb-back fb-cover-back-inner" style="display:flex; justify-content:center; align-items:center; background:#ff4757; color:#fff; font-size:1.5rem; font-weight:bold; border: 4px dashed rgba(255,255,255,0.3);">
+    <div class="fb-back fb-cover-back-inner" style="display:flex; justify-content:center; align-items:center; background:#4e342e; color:#ffd700; font-size:1.5rem; font-weight:bold; border: 4px dashed rgba(255,215,0,0.4);">
       <div style="text-align:center;">
-        <p>Gửi ngàn</p>
-        <p>Yêu Thương 💖</p>
+        <p style="color:#ffeaa7;">Gửi ngàn</p>
+        <p style="color:#ffd700;">Yêu Thương 💖</p>
       </div>
     </div>
   </div>`;
@@ -822,8 +827,8 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="fb-back fb-back-cover-inner">
       <div class="fb-cover-content">
         <p style="font-size:2rem;">💖</p>
-        <p>Đến đây thôi nhé~</p>
-        <p style="font-size:0.85rem;opacity:0.7;">Nhấn vào đây để đóng album ❤️</p>
+        <p style="color:#ffd700; font-weight:bold; font-size:1.3rem;">Đến đây thôi nhé~</p>
+        <p style="font-size:0.85rem; color:#ffeaa7; opacity:0.9;">Nhấn vào đây để đóng album ❤️</p>
       </div>
     </div>
   </div>`;
@@ -832,17 +837,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== Flip logic =====
   const pages = fbPages.querySelectorAll('.fb-page');
+  const layoutContainer = document.querySelector('.album-layout-container');
   let cur = 0; // index into pages[]
 
   const syncUI = () => {
     if (cur === 0) {
       flipbook.classList.remove('open');
+      if (layoutContainer) layoutContainer.classList.remove('book-open');
+    } else {
+      if (layoutContainer) layoutContainer.classList.add('book-open');
     }
   };
 
   const flipNext = () => {
     if (cur >= pages.length - 1) return;
-    if (cur === 0) flipbook.classList.add('open');
+    if (cur === 0) {
+      flipbook.classList.add('open');
+      if (layoutContainer) layoutContainer.classList.add('book-open');
+    }
     
     // Fix z-index so the left page stays on top of the previously flipped left page
     pages[cur].style.zIndex = 300 + cur;
@@ -865,7 +877,10 @@ document.addEventListener("DOMContentLoaded", () => {
       pages[cur].style.zIndex = 199 - (cur - 1);
     }
     
-    if (cur === 0) flipbook.classList.remove('open');
+    if (cur === 0) {
+      flipbook.classList.remove('open');
+      if (layoutContainer) layoutContainer.classList.remove('book-open');
+    }
     syncUI();
   };
 
@@ -895,3 +910,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   syncUI();
 });
+
+// ================== COMPANION TYPEWRITER LOGIC (SCREEN 2) ==================
+function runAlbumCompanionTypewriter() {
+  const speechText = document.getElementById("companionSpeechText");
+  const speechCursor = document.getElementById("companionSpeechCursor");
+  if (!speechText) return;
+  
+  const message = "Dudu thúi mở album ôn lại kỉ niệm cùng Bubu thưm nha.";
+  speechText.textContent = "";
+  if (speechCursor) speechCursor.style.display = "inline-block";
+  
+  let charIdx = 0;
+  function typeNext() {
+    if (charIdx < message.length) {
+      speechText.textContent += message.charAt(charIdx);
+      charIdx++;
+      setTimeout(typeNext, 45);
+    } else {
+      if (speechCursor) {
+        setTimeout(() => {
+          speechCursor.style.display = "none";
+        }, 1200);
+      }
+    }
+  }
+  typeNext();
+}

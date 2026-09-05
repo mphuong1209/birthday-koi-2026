@@ -134,10 +134,24 @@
 <div id="screen-2" class="screen" style="align-items: center;">
   <section class="section album-section">
     
-    <div class="album-wrapper">
-      <div class="flipbook" id="flipbook">
-        <div class="flipbook-pages" id="flipbookPages">
-          <!-- Pages dynamically injected by JS -->
+    <div class="album-layout-container">
+      <!-- Cột trái: Album 3D -->
+      <div class="album-wrapper">
+        <div class="flipbook" id="flipbook">
+          <div class="flipbook-pages" id="flipbookPages">
+            <!-- Pages dynamically injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột phải: Bubu nhảy múa & Bong bóng thoại chạy chữ -->
+      <div class="album-companion" id="albumCompanion">
+        <div class="companion-speech-bubble" id="companionSpeechBubble">
+          <p class="speech-text" id="companionSpeechText"></p>
+          <span class="speech-cursor" id="companionSpeechCursor">|</span>
+        </div>
+        <div class="companion-bear-wrap">
+          <img src="{{ url_for('static', filename='images/bubu_wish_1_transparent.gif') }}" alt="Bubu Dancing" class="companion-bear-gif">
         </div>
       </div>
     </div>
