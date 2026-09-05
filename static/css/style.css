@@ -1146,13 +1146,51 @@ h1, h2, h3 {
   background: linear-gradient(145deg, #543428, #3e2419) !important;
 }
 
-.fb-back-cover-inner {
+.fb-back-cover-inner, .fb-inner-back-cover {
   background: linear-gradient(145deg, #6e473b 0%, #543428 50%, #3e2419 100%) !important;
   border-right: 22px solid #2e170d !important;
   color: #ffd700 !important;
   text-align: center;
   align-items: center;
   justify-content: center;
+}
+
+.fb-outer-back-cover {
+  background: linear-gradient(145deg, #6e473b 0%, #543428 50%, #3e2419 100%) !important;
+  border-left: 22px solid #2e170d !important;
+  color: #ffd700 !important;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-book-hint {
+  font-size: 0.95rem;
+  color: #ffeaa7;
+  margin-top: 14px;
+  padding: 8px 18px;
+  background: rgba(0,0,0,0.3);
+  border: 1px dashed rgba(255,215,0,0.5);
+  border-radius: 20px;
+  display: inline-block;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+}
+
+@keyframes rotateBookToFront {
+  0% {
+    transform: rotateY(180deg) scale(0.96);
+  }
+  50% {
+    transform: rotateY(90deg) scale(1.05);
+  }
+  100% {
+    transform: rotateY(0deg) scale(1);
+  }
+}
+
+.flipbook.rotating-to-front {
+  animation: rotateBookToFront 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
 }
 
 /* ---- INNER PAGE LAYOUT ---- */
@@ -1198,41 +1236,109 @@ h1, h2, h3 {
   font-size: 1rem;
 }
 
-/* ---- POLAROID PHOTO GRID ---- */
+/* ---- POLAROID PHOTO GRID & SPREAD HEADER ---- */
+.fb-page-title {
+  text-align: center;
+  font-weight: 800;
+  color: #ff4757;
+  padding-top: 10px;
+  font-size: 1.15rem;
+  font-family: 'Baloo 2', cursive;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.fb-page-spacer {
+  height: 40px;
+  flex-shrink: 0;
+}
+
+/* SPREAD TITLE BAR (CENTERED OVER THE BOOK SEAM) */
+.album-spread-title-bar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease;
+  white-space: nowrap;
+}
+
+.album-spread-title-bar.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.spread-title-pill {
+  display: inline-block;
+  background: #ffffff;
+  border: 2.5px solid #ff4757;
+  color: #ff4757;
+  padding: 5px 24px;
+  border-radius: 22px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.18rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(255, 71, 87, 0.24), 0 2px 6px rgba(0,0,0,0.08);
+}
+
 .fb-photo-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: space-evenly;
-  gap: 12px;
-  padding: 12px;
+  align-content: center;
+  gap: 12px 14px;
+  padding: 6px 14px 14px 14px;
   flex: 1;
   overflow: hidden;
-  background: #fafafa;
+  background: #fdfcf9;
 }
 
+/* 100% UNIFORM POLAROID CARD SIZE ACROSS ALL PAGES */
 .fb-photo-cell {
-  width: calc(48% - 6px);
-  background: #fff;
-  padding: 4px 4px 14px 4px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
-  border-radius: 2px;
+  width: calc(50% - 10px);
+  height: 172px;
+  background: #ffffff;
+  padding: 6px 6px 20px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+  border-radius: 3px;
   display: flex;
   flex-direction: column;
   transform: rotate(var(--rot, 0deg));
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
   cursor: pointer;
   position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
-.fb-photo-cell:nth-child(3),
-.fb-photo-cell:nth-child(4),
-.fb-photo-cell:nth-child(5) {
-  width: calc(31.33% - 6px);
+
+/* Washi tape decoration on polaroids */
+.fb-photo-cell.has-tape::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 40px;
+  height: 13px;
+  background: rgba(255, 230, 150, 0.85);
+  border-left: 2px dashed rgba(200, 160, 80, 0.4);
+  border-right: 2px dashed rgba(200, 160, 80, 0.4);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  z-index: 4;
 }
 
 .fb-photo-cell:hover {
-  transform: rotate(0deg) scale(1.08);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  transform: rotate(0deg) scale(1.06) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22);
   z-index: 10;
 }
 
@@ -1248,10 +1354,10 @@ h1, h2, h3 {
 
 .fb-photo-img-wrap {
   width: 100%;
-  flex: 1;
+  height: 146px;
   overflow: hidden;
   border-radius: 2px;
-  min-height: 0;
+  flex: none;
 }
 
 .fb-photo-img-wrap img {
@@ -1263,7 +1369,7 @@ h1, h2, h3 {
 }
 
 .fb-photo-cell:hover .fb-photo-img-wrap img {
-  transform: scale(1.1);
+  transform: scale(1.06);
 }
 
 .fb-photo-caption {

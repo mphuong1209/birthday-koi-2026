@@ -737,45 +737,73 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!flipbook || !fbPages) return;
 
   // ===== Config =====
-  const PER_SIDE   = 5;
+  // ===== Config =====
+  // ===== Page & Spread Config =====
+  const PAGE_CONFIGS = [
+    { page: 1,  count: 4, title: 'Ảnh photobooth bên nhau', isSpread: false },
+    { page: 2,  count: 4, title: 'Ảnh hồi còn đi học', isSpread: true },
+    { page: 3,  count: 4, title: 'Ảnh hồi còn đi học', isSpread: true },
+    { page: 4,  count: 4, title: 'Cùng nhau đi chơi', isSpread: true },
+    { page: 5,  count: 4, title: 'Cùng nhau đi chơi', isSpread: true },
+    { page: 6,  count: 4, title: 'Đi quân sự', isSpread: true },
+    { page: 7,  count: 4, title: 'Đi quân sự', isSpread: true },
+    { page: 8,  count: 4, title: 'Lần đầu tỏ tình', isSpread: true },
+    { page: 9,  count: 4, title: 'Lần đầu tỏ tình', isSpread: true },
+    { page: 10, count: 4, title: 'Kỷ niệm ngọt ngào', isSpread: false }
+  ];
+
+  const SPREAD_TITLES = {
+    2: 'Ảnh hồi còn đi học',
+    3: 'Cùng nhau đi chơi',
+    4: 'Đi quân sự',
+    5: 'Lần đầu tỏ tình'
+  };
+
   const NUM_LEAVES = 5;
-  const TOTAL      = NUM_LEAVES * 2 * PER_SIDE;
+  const TOTAL_PHOTOS = 40;
 
   // ===== Fill up albumData =====
   const seeds = ['aa','bb','cc','dd','ee','ff','gg','hh','ii','jj'];
-  while (albumData.length < TOTAL) {
+  while (albumData.length < TOTAL_PHOTOS) {
     const s = seeds[albumData.length % seeds.length];
     albumData.push({ image: `https://picsum.photos/seed/${s}${albumData.length}/300/300`, title: '', desc: '' });
   }
 
+  // Slice photos per page (mỗi trang đúng 4 ảnh polaroid đồng đều, vừa vặn không bị cắt xén)
+  let dataIdx = 0;
+  const pageItems = {};
+  PAGE_CONFIGS.forEach(cfg => {
+    pageItems[cfg.page] = albumData.slice(dataIdx, dataIdx + cfg.count);
+    dataIdx += cfg.count;
+  });
+
   // Polaroid rotations
-  const ROTS = ['-2.5deg', '1.8deg', '-1.2deg', '2.2deg'];
+  const ROTS = ['-2deg', '1.8deg', '-1.5deg', '2deg'];
 
-  const PAGE_TITLES = {
-    1: "Ảnh photobooth bên nhau",
-    2: "Ảnh hồi còn đi học",
-    3: "Ảnh hồi còn đi học",
-    4: "Cùng nhau đi chơi",
-    5: "Cùng nhau đi chơi",
-    6: "Đi quân sự",
-    7: "Đi quân sự",
-    8: "Lần đầu tỏ tình",
-    9: "Lần đầu tỏ tình",
-    10: "Lễ tốt nghiệp"
-  };
-
-  // ===== Render grid of 5 photos for one side =====
-  const renderSide = (items, leaf, side) => {
-    let pageNum = (leaf * 2) + (side === 'f' ? 1 : 2);
-    let pageTitle = PAGE_TITLES[pageNum] || "";
+  // ===== Render grid of photos for one side =====
+  const renderSide = (items, pageNum) => {
+    const cfg = PAGE_CONFIGS.find(c => c.page === pageNum) || { title: '', isSpread: false };
+    let g = '';
     
-    let g = `<div style="text-align:center; font-weight:bold; color:#ff4757; padding-top:15px; font-size:1.1rem; min-height: 35px;">${pageTitle}</div>`;
-    g += '<div class="fb-photo-grid">';
+    // Nếu là trang đơn (Trang 1 và Trang 10) thì hiện tiêu đề ở đầu trang
+    // Nếu là trang đôi (Trang 2-3, 4-5, 6-7, 8-9) thì chỉ chừa khoảng trống trên, tiêu đề đặt ở giữa 2 trang
+    if (!cfg.isSpread && cfg.title) {
+      g += `<div class="fb-page-title">${cfg.title}</div>`;
+    } else {
+      g += `<div class="fb-page-spacer"></div>`;
+    }
+
+    g += `<div class="fb-photo-grid">`;
     items.forEach((item, i) => {
-      const rot = ROTS[i % ROTS.length];
-      const s = `lf${leaf}_${side}_${i}`;
-      if (!item) { g += `<div class="fb-photo-cell empty" style="--rot:${rot}"></div>`; return; }
-      g += `<div class="fb-photo-cell" style="--rot:${rot}">
+      const rot = ROTS[(pageNum + i) % ROTS.length];
+      const hasTape = (i % 2 === 1);
+      const tapeClass = hasTape ? 'has-tape' : '';
+      const s = `p${pageNum}_${i}`;
+      if (!item) {
+        g += `<div class="fb-photo-cell empty ${tapeClass}" style="--rot:${rot}"></div>`;
+        return;
+      }
+      g += `<div class="fb-photo-cell ${tapeClass}" style="--rot:${rot}">
         <div class="fb-photo-img-wrap">
           <img src="${item.image}" loading="lazy" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${s}/300/300'">
         </div>
@@ -809,26 +837,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Inner leaves
   for (let leaf = 0; leaf < NUM_LEAVES; leaf++) {
-    const z          = 199 - leaf;
-    const fi         = leaf * 2 * PER_SIDE;
-    const bi         = fi + PER_SIDE;
-    const frontItems = albumData.slice(fi, fi + PER_SIDE);
-    const backItems  = albumData.slice(bi, bi + PER_SIDE);
+    const z = 199 - leaf;
+    const pFront = (leaf * 2) + 1;
+    const pBack  = (leaf * 2) + 2;
+    const frontItems = pageItems[pFront] || [];
+    const backItems  = pageItems[pBack]  || [];
 
     html += `<div class="fb-page" style="z-index:${z};" data-index="${leaf + 1}">
-      <div class="fb-front">${renderSide(frontItems, leaf, 'f')}</div>
-      <div class="fb-back">${renderSide(backItems, leaf, 'b')}</div>
+      <div class="fb-front">${renderSide(frontItems, pFront)}</div>
+      <div class="fb-back">${renderSide(backItems, pBack)}</div>
     </div>`;
   }
 
-  // Back Cover
+  // Back Cover Leaf
   html += `<div class="fb-page fb-page-cover" style="z-index:1;" data-index="${NUM_LEAVES + 1}">
-    <div class="fb-front"></div>
-    <div class="fb-back fb-back-cover-inner">
+    <div class="fb-front fb-inner-back-cover">
       <div class="fb-cover-content">
-        <p style="font-size:2rem;">💖</p>
-        <p style="color:#ffd700; font-weight:bold; font-size:1.3rem;">Đến đây thôi nhé~</p>
-        <p style="font-size:0.85rem; color:#ffeaa7; opacity:0.9;">Nhấn vào đây để đóng album ❤️</p>
+        <p style="font-size:2.4rem; margin-bottom: 8px;">💖</p>
+        <p style="color:#ffd700; font-weight:bold; font-size:1.35rem;">Đến đây thôi nhé~</p>
+        <p class="close-book-hint">✦ Nhấn để đóng album ❤️ ✦</p>
+      </div>
+    </div>
+    <div class="fb-back fb-outer-back-cover">
+      <div class="fb-cover-content" style="justify-content:center; align-items:center;">
+        <p style="font-size:2.2rem; margin-bottom: 8px;">✨ 🐻 🐼 ✨</p>
+        <p style="color:#ffd700; font-weight:bold; font-size:1.35rem; font-family:'Dancing Script',cursive;">Kỷ Niệm Ngọt Ngào</p>
+        <p style="font-size:0.9rem; color:#ffeaa7; margin-top: 6px;">Motka Koi ❤️ Motki Minnie</p>
       </div>
     </div>
   </div>`;
@@ -838,7 +872,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== Flip logic =====
   const pages = fbPages.querySelectorAll('.fb-page');
   const layoutContainer = document.querySelector('.album-layout-container');
+  const spreadTitleBar = document.getElementById('albumSpreadTitleBar');
+  const spreadTitlePill = document.getElementById('spreadTitlePill');
   let cur = 0; // index into pages[]
+  let isClosing = false;
+
+  const updateSpreadBanner = () => {
+    if (!spreadTitleBar || !spreadTitlePill) return;
+    const title = SPREAD_TITLES[cur];
+    if (title && cur >= 2 && cur <= 5) {
+      spreadTitlePill.textContent = title;
+      spreadTitleBar.classList.add('show');
+    } else {
+      spreadTitleBar.classList.remove('show');
+    }
+  };
 
   const syncUI = () => {
     if (cur === 0) {
@@ -847,10 +895,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       if (layoutContainer) layoutContainer.classList.add('book-open');
     }
+    updateSpreadBanner();
   };
 
   const flipNext = () => {
-    if (cur >= pages.length - 1) return;
+    if (isClosing || cur >= pages.length - 1) return;
     if (cur === 0) {
       flipbook.classList.add('open');
       if (layoutContainer) layoutContainer.classList.add('book-open');
@@ -864,7 +913,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const flipPrev = () => {
-    if (cur <= 0) return;
+    if (isClosing || cur <= 0) return;
     cur--;
     pages[cur].classList.remove('flipped');
     
@@ -884,22 +933,69 @@ document.addEventListener("DOMContentLoaded", () => {
     syncUI();
   };
 
+  // ĐÓNG QUYỂN LOGIC THẬT: Trang cuối gập vào -> Xoay 3D sang mặt bìa đầu
+  const closeAlbumWithAnimation = () => {
+    if (isClosing) return;
+    isClosing = true;
+
+    // 1. Ẩn banner tiêu đề
+    if (spreadTitleBar) spreadTitleBar.classList.remove('show');
+
+    // 2. Trang cuối gập vào (Flip the last leaf/back cover forward to the left)
+    const backCoverLeaf = pages[pages.length - 1];
+    backCoverLeaf.style.zIndex = 400;
+    backCoverLeaf.classList.add('flipped');
+
+    // 3. Sau khi trang cuối gập vào hoàn toàn (750ms) -> Bắt đầu xoay sang mặt bìa đầu
+    setTimeout(() => {
+      flipbook.classList.add('rotating-to-front');
+      if (layoutContainer) layoutContainer.classList.remove('book-open');
+
+      // Ở giữa góc xoay (450ms), khi sách đang quay cạnh bên, bí mật reset trạng thái các trang
+      setTimeout(() => {
+        pages.forEach((p, idx) => {
+          p.classList.remove('flipped');
+          if (idx === 0) p.style.zIndex = 200;
+          else if (idx === pages.length - 1) p.style.zIndex = 1;
+          else p.style.zIndex = 199 - (idx - 1);
+        });
+        cur = 0;
+        flipbook.classList.remove('open');
+      }, 450);
+
+      // Kết thúc xoay sách (950ms)
+      setTimeout(() => {
+        flipbook.classList.remove('rotating-to-front');
+        isClosing = false;
+        syncUI();
+      }, 950);
+
+    }, 750);
+  };
+
   // Click on COVER to open
   pages[0].addEventListener('click', (e) => { 
-    if (cur === 0) {
+    if (cur === 0 && !isClosing) {
       flipNext(); 
+      e.stopPropagation();
+    }
+  });
+
+  // Click on Back Cover Leaf to close
+  pages[pages.length - 1].addEventListener('click', (e) => {
+    if (cur === pages.length - 1 && !isClosing) {
+      closeAlbumWithAnimation();
       e.stopPropagation();
     }
   });
 
   // Click RIGHT half of screen → next page, LEFT half → prev page
   flipbook.addEventListener('click', e => {
-    if (cur === 0) return; // cover handles its own click
+    if (cur === 0 || isClosing) return; // cover handles its own click
     const midX = window.innerWidth / 2;
     if (e.clientX >= midX) {
       if (cur === pages.length - 1) {
-        // Close book entirely when clicking right side of last page
-        while (cur > 0) flipPrev();
+        closeAlbumWithAnimation();
       } else {
         flipNext();
       }
