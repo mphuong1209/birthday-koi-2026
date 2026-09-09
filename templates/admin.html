@@ -67,12 +67,105 @@
             margin-top: -20px;
             margin-bottom: 25px;
         }
+        .public-link-box {
+            background: #f0f7ff;
+            border: 2px dashed #70a1ff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+        }
+        .public-link-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #1e3799;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ed573;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #2ed573;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+        .public-link-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .public-link-row input {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            border: 1px solid #ced6e0;
+            border-radius: 8px;
+            background: #fff;
+            color: #2f3542;
+            font-family: monospace;
+            font-weight: 600;
+            outline: none;
+        }
+        .public-link-row button, .public-link-row .open-link-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #ff4757;
+            color: #fff;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .public-link-row button:hover, .public-link-row .open-link-btn:hover {
+            background: #ff6b81;
+            transform: translateY(-1px);
+        }
+        .public-link-row .open-link-btn {
+            background: #3742fa;
+        }
+        .public-link-row .open-link-btn:hover {
+            background: #5352ed;
+        }
+        .public-link-hint {
+            font-size: 0.82rem;
+            color: #57606f;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>💌 Hộp Thư Ước Nguyện Của Anh Gấu 🐻</h1>
         <div class="auto-update-text">🟢 Đang tự động cập nhật tin nhắn mới...</div>
+
+        <!-- PUBLIC LINK SHARING BOX -->
+        <div class="public-link-box">
+            <div class="public-link-title">
+                <span class="pulse-dot"></span>
+                <span>Link Public gửi cho anh Dudu (Mở được cả Điện Thoại 4G/WiFi & Máy Tính):</span>
+            </div>
+            <div class="public-link-row">
+                <input type="text" id="publicUrlInput" readonly value="{{ public_url or 'Đang kết nối Cloudflare để tạo link...' }}">
+                <button id="copyPublicBtn" onclick="copyPublicLink()">📋 Sao chép</button>
+                <a id="openPublicLink" href="{{ public_url or '#' }}" target="_blank" class="open-link-btn" title="Mở thử link">↗ Mở web</a>
+            </div>
+            <div class="public-link-hint">💡 Hãy copy link này gửi qua Zalo / Messenger cho anh Dudu. Anh ấy ở bất kỳ đâu cũng mở xem được mà không cần chung mạng WiFi!</div>
+        </div>
         
         <div id="wishes-container">
             <div class="empty-state">Đang tải dữ liệu...</div>
@@ -124,6 +217,41 @@
         fetchWishes();
         // Cập nhật mỗi 2 giây
         setInterval(fetchWishes, 2000);
+
+        // Copy Public Link
+        function copyPublicLink() {
+            const input = document.getElementById('publicUrlInput');
+            if (!input || !input.value.startsWith('http')) {
+                alert("Đang tạo đường link, vui lòng chờ trong giây lát...");
+                return;
+            }
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = document.getElementById('copyPublicBtn');
+                btn.textContent = "✅ Đã chép!";
+                setTimeout(() => btn.textContent = "📋 Sao chép", 2000);
+            }).catch(() => {
+                input.select();
+                document.execCommand("copy");
+                alert("Đã sao chép link!");
+            });
+        }
+
+        // Tự động kiểm tra và cập nhật URL nếu ban đầu đang tải
+        async function checkPublicUrl() {
+            const input = document.getElementById('publicUrlInput');
+            const openBtn = document.getElementById('openPublicLink');
+            if (input && input.value && input.value.startsWith('http')) return;
+            try {
+                const res = await fetch('/api/get_public_url');
+                const data = await res.json();
+                if (data.public_url && input) {
+                    input.value = data.public_url;
+                    if (openBtn) openBtn.href = data.public_url;
+                }
+            } catch(e) {}
+        }
+        setInterval(checkPublicUrl, 2000);
+        checkPublicUrl();
     </script>
 </body>
 </html>

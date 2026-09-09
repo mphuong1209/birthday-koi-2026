@@ -1030,6 +1030,10 @@ document.addEventListener("DOMContentLoaded", () => {
         flipbook.classList.remove('rotating-to-front');
         isClosing = false;
         syncUI();
+
+        // Hiện lời nhắn ngọt ngào sau khi đóng quyển xong
+        const closingMsg = "Tuy album ảnh nì ko chứa hết các kỉ niệm của chúng mình nhưng mà mí bé, khoảng thời gian bên anh là khoảng thời gian thiệt sự nà hạnh phúc nhứt, nà khoảng thời gian bé cũng thay đổi nhìu nhưng hăm đổi ngiu hehee vè vè Du thúi cũm thí hí hí. Bé Bu hi dọng sang tủi mứi anh iu cũm cóa nhìu kỉ niệm mà hưn những năm cũ nha, iu anh Du thúi nhìu ạ!";
+        runAlbumCompanionTypewriter(closingMsg);
       }, 950);
 
     }, 750);
@@ -1070,12 +1074,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ================== COMPANION TYPEWRITER LOGIC (SCREEN 2) ==================
-function runAlbumCompanionTypewriter() {
+let companionTypewriterTimer = null;
+let currentCompanionMessage = "";
+
+function runAlbumCompanionTypewriter(customMessage) {
   const speechText = document.getElementById("companionSpeechText");
   const speechCursor = document.getElementById("companionSpeechCursor");
+  const speechBubble = document.getElementById("companionSpeechBubble");
   if (!speechText) return;
 
-  const message = "Dudu thúi mở album ôn lại kỉ niệm cùng Bubu thưm nha.";
+  const defaultMsg = "Dudu thúi mở album ôn lại kỉ niệm cùng Bubu thưm nha.";
+  const message = customMessage || defaultMsg;
+  currentCompanionMessage = message;
+
+  if (companionTypewriterTimer) {
+    clearTimeout(companionTypewriterTimer);
+    companionTypewriterTimer = null;
+  }
+
   speechText.textContent = "";
   if (speechCursor) speechCursor.style.display = "inline-block";
 
@@ -1084,7 +1100,8 @@ function runAlbumCompanionTypewriter() {
     if (charIdx < message.length) {
       speechText.textContent += message.charAt(charIdx);
       charIdx++;
-      setTimeout(typeNext, 45);
+      const speed = message.length > 100 ? 25 : 45;
+      companionTypewriterTimer = setTimeout(typeNext, speed);
     } else {
       if (speechCursor) {
         setTimeout(() => {
@@ -1094,4 +1111,18 @@ function runAlbumCompanionTypewriter() {
     }
   }
   typeNext();
+
+  // Bấm vào bong bóng thoại để hiện ngay toàn bộ nội dung mà không cần chờ chạy hết hiệu ứng
+  if (speechBubble && !speechBubble.dataset.clickBound) {
+    speechBubble.dataset.clickBound = "true";
+    speechBubble.style.cursor = "pointer";
+    speechBubble.addEventListener("click", () => {
+      if (companionTypewriterTimer) {
+        clearTimeout(companionTypewriterTimer);
+        companionTypewriterTimer = null;
+      }
+      speechText.textContent = currentCompanionMessage;
+      if (speechCursor) speechCursor.style.display = "none";
+    });
+  }
 }
