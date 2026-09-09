@@ -775,20 +775,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const NUM_LEAVES = 5;
   const TOTAL_PHOTOS = 40;
 
-  // ===== Fill up albumData =====
-  const seeds = ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj'];
-  while (albumData.length < TOTAL_PHOTOS) {
-    const s = seeds[albumData.length % seeds.length];
-    albumData.push({ image: `https://picsum.photos/seed/${s}${albumData.length}/300/300`, title: '', desc: '' });
-  }
-
-  // Slice photos per page (mỗi trang đúng 4 ảnh polaroid đồng đều, vừa vặn không bị cắt xén)
-  let dataIdx = 0;
-  const pageItems = {};
-  PAGE_CONFIGS.forEach(cfg => {
-    pageItems[cfg.page] = albumData.slice(dataIdx, dataIdx + cfg.count);
-    dataIdx += cfg.count;
-  });
+  // ===== 40 Ảnh thực tế được xếp chính xác theo từng trang đã quy định =====
+  const pageItems = {
+    1: [
+      { image: '/static/images/album/p1_1.webp' },
+      { image: '/static/images/album/p1_2.webp' },
+      { image: '/static/images/album/p1_3.webp' },
+      { image: '/static/images/album/p1_4.webp' }
+    ],
+    2: [
+      { image: '/static/images/album/p2_1.webp' },
+      { image: '/static/images/album/p2_2.webp' },
+      { image: '/static/images/album/p2_3.webp' },
+      { image: '/static/images/album/p2_4.webp' }
+    ],
+    3: [
+      { image: '/static/images/album/p3_1.webp' },
+      { image: '/static/images/album/p3_2.webp' },
+      { image: '/static/images/album/p3_3.webp' },
+      { image: '/static/images/album/p3_4.webp' }
+    ],
+    4: [
+      { image: '/static/images/album/p4_1.webp' },
+      { image: '/static/images/album/p4_2.webp' },
+      { image: '/static/images/album/p4_3.webp' },
+      { image: '/static/images/album/p4_4.webp' }
+    ],
+    5: [
+      { image: '/static/images/album/p5_1.webp' },
+      { image: '/static/images/album/p5_2.webp' },
+      { image: '/static/images/album/p5_3.webp' },
+      { image: '/static/images/album/p5_4.webp' }
+    ],
+    6: [
+      { image: '/static/images/album/p6_1.webp' },
+      { image: '/static/images/album/p6_2.webp' },
+      { image: '/static/images/album/p6_3.webp' },
+      { image: '/static/images/album/p6_4.webp' }
+    ],
+    7: [
+      { image: '/static/images/album/p7_1.webp' },
+      { image: '/static/images/album/p7_2.webp' },
+      { image: '/static/images/album/p7_3.webp' },
+      { image: '/static/images/album/p7_4.webp' }
+    ],
+    8: [
+      { image: '/static/images/album/p8_1.webp' },
+      { image: '/static/images/album/p8_2.webp' },
+      { image: '/static/images/album/p8_3.webp' },
+      { image: '/static/images/album/p8_4.webp' }
+    ],
+    9: [
+      { image: '/static/images/album/p9_1.webp' },
+      { image: '/static/images/album/p9_2.webp' },
+      { image: '/static/images/album/p9_3.webp' },
+      { image: '/static/images/album/p9_4.webp' }
+    ],
+    10: [
+      { image: '/static/images/album/p10_1.webp' },
+      { image: '/static/images/album/p10_2.webp' },
+      { image: '/static/images/album/p10_3.webp' },
+      { image: '/static/images/album/p10_4.webp' }
+    ]
+  };
 
   // Polaroid rotations
   const ROTS = ['-2deg', '1.8deg', '-1.5deg', '2deg'];
