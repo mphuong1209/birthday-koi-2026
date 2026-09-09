@@ -4,6 +4,8 @@ from datetime import datetime
 import config
 import os
 import json
+import sys
+import socket
 
 app = Flask(__name__)
 
@@ -100,19 +102,40 @@ def get_wishes():
 
 @app.route("/admin")
 def view_wishes():
-    import datetime
-    now = datetime.datetime.now()
-    is_protected_date = (now.year == 2026 and now.month == 9 and now.day == 10)
-    
-    if not is_protected_date:
-        try:
-            with open("wishes.json", "w", encoding="utf-8") as f:
-                json.dump([], f)
-        except Exception:
-            pass
-            
     return render_template("admin.html")
 
+
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+            sys.stderr.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
+
     port = int(os.environ.get("PORT", 5000))
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        local_ip = "127.0.0.1"
+
+    # In thông tin đường link trực tiếp lên Terminal (chỉ in 1 lần duy nhất khi khởi động)
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        border = "═" * 66
+        print(f"\n{border}", flush=True)
+        print("  🎉 WEBSITE ĐÃ SẴN SÀNG HOẠT ĐỘNG!", flush=True)
+        print(f"{border}", flush=True)
+        print("  ❤️   TRANG WEB GỬI CHO NGƯỜI YÊU:", flush=True)
+        print(f"      👉 Trình duyệt máy tính  : http://localhost:{port}", flush=True)
+        print(f"      👉 Điện thoại (cùng WiFi): http://{local_ip}:{port}", flush=True)
+        print("", flush=True)
+        print("  💌  TRANG ADMIN (NHẬN & XEM LỜI CHÚC TỪ NGƯỜI YÊU):", flush=True)
+        print(f"      👉 Trình duyệt máy tính  : http://localhost:{port}/admin", flush=True)
+        print(f"      👉 Điện thoại (cùng WiFi): http://{local_ip}:{port}/admin", flush=True)
+        print(f"{border}\n", flush=True)
+
     app.run(host="0.0.0.0", port=port, debug=True)
+

@@ -37,7 +37,10 @@ Mở terminal tại thư mục `love-web`, chạy:
 pip install -r requirements.txt
 python app.py
 ```
-Sau đó mở trình duyệt vào: `http://localhost:5000`
+Sau đó mở trình duyệt:
+- **Trang web gửi cho người yêu**: `http://localhost:5000`
+- **Trang Admin nhận & xem lời chúc**: `http://localhost:5000/admin`
+*(Terminal cũng sẽ tự động hiển thị đầy đủ 2 đường link này và link xem trên điện thoại khi bạn chạy lệnh)*
 
 ## 5. Deploy để lấy LINK gửi cho người yêu 🔗
 

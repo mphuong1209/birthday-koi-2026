@@ -31,10 +31,16 @@ BIRTHDAY_DATE = {
 # ---------- 4. LỜI CHÚC SINH NHẬT CHÍNH ----------
 BIRTHDAY_MESSAGE = (
     "HAPPY BIRTHDAY ANH DUDU KOI!\n\n"
-    "Chúc anh gấu béo của em luôn đẹp trai, vui vẻ, khoẻ mạnh và gặt hái được thật nhiều thành công trong tuổi mới! "
-    "Cảm ơn Anh Dudu Koi vì đã luôn yêu thương, cưng chiều và chở che cho Bé Bubu Minnie. "
-    "Minnie chúc gấu béo tuổi mới thật rạng rỡ, luôn cười tươi mỗi ngày và đón thật nhiều mùa sinh nhật ngọt ngào nữa bên em nha. "
-    "Yêu Anh Dudu Koi nhất trần đời! ❤️🧸✨"
+    "Hellu Dudu Koi thúi cụa bé Bubu Minnie thưm,\n"
+    "Nhanh qué, năm nay là năm thứ 3 bé đón sinh nhật anh ùi nè hí hí, bé Bu rất rất nà iu anh Dudu thúi nun ạ\n"
+    "Thời gian ùi chúm mình cũm cóa rất nhìu kỉ niệm zui hehehe aita aita te te te ete ete iti nhưng mè cũm cóa núc bùn oe oe oe oe oe. Bé Bubu chin nhũi anh Dudu nhìu vì mí lần bé nàm anh bùn ẹ,\n"
+    "Chiếc web nì bé Bu nàm từ nâu ùi ẹ mè mè núc ý vẫn nà phin bản dỏm dít, giờ bé cải tiến nhìu nhìn đẹp hưn ùi ( tuy nóa vẫn sặc mùi AI oe oe ). Bé sẽ cố gắng cải thịn sờ kiu đệ nàm quà choa anh iu đẹp hưn ẹ hí hí\n"
+    "Bé Bubu hăm gioải văn vở nin bé vic nời chúc cóa hưi cợt nhả mí lủng củng, mè mè anh Dudu anh coai web nì anh Dudu chắc thit lém hí hí hí ( bé hi zọng thí )\n"
+    "Thui bé hem dài dòng nứa, cơ mè anh choa bé khao iiii bé zui vì dc khao anh cư iiiiiiiiiiiiiiii\n"
+    "Bé Bubu chúc anh Dudu tủi mứi thúi hưn à nhừm thưm hưn, nun nun đọep troai đệ choa các ems à nhầm choa em bé Bubu Minnie ngắm ehhhh, mí cả anh Du thúi cũm sắp phỏng vấn ùi thì bé cũm chúc anh Du thúi tủi mứi may mắn thịt thịt thịt nà nhìu hưn tủi cũ đệ anh Du zui, bé Bu sĩ sĩ mí coan kia e hé hé hé hé. Oe oe bé hem gioải văn vẻ nin bé tặng anh chíc web nì để anh Dudu thửn thức dc hem ẹ, hì hì.\n"
+    "Mí bé Bu sinh nhựt anh Du húi nà nà bé coai nè ngày quan trọng nhứt ẹ vì mí bé anh nà quan trọng nhứt cụa cuộc đời bé ẹ iiiiiiii, bé iu anh Du húi rất nhìuuuuu.\n"
+    "Tóm nại, bé Bu chúc anh Du tủi mứi chúc anh thành công hưn trong công vịc vè vè iu bé Bu nhìu hưn nhoaaaaaa. Bé Bu hứa bé Bu sẽ bớt lóng tính hưn đệ anh Du húi hăm bùn nứa và và iu Du húi nhìu hưn ẹ\n\n"
+    "                                                               Bé Bubu Minnie thưm thoa"
 )
 
 # ---------- 5. QUÀ BÍ MẬT (ẢNH + LỜI CHÚC KHI BẤM MỞ QUÀ) ----------
